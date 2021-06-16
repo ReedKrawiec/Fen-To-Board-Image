@@ -1,7 +1,7 @@
 import unittest
 import os
-os.sys.path.append(os.path.abspath(".."))
-from main import fenToBoardImage, loadPiecesFolder
+os.sys.path.append(os.path.abspath("../fenToBoardImage"))
+from fenToBoardImage import fenToBoardImage, loadPiecesFolder
 from PIL import Image
 from PIL import ImageDraw
 from operator import itemgetter

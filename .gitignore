@@ -4,3 +4,4 @@ __pycache__
 fenToBoardImage.egg-info
 dist
 build
+.pyirc
