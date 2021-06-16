@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='fenToBoardImage',  
-     version='0.1',
+     version='0.3',
      author="Reed Krawiec",
      author_email="reedkrawiec@gmail.com",
      description="Create PIL images from chess Fen strings",
@@ -14,7 +14,6 @@ setuptools.setup(
    long_description_content_type="text/markdown",
      keywords=["chess fen Pil low board"],
      license="MIT",
-     install_requires=["Pillow"],
      url="https://github.com/ReedKrawiec/fenToBoardImage",
      packages=setuptools.find_packages(),
      classifiers=[
