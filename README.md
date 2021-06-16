@@ -18,11 +18,11 @@ Install the package using pip
 $ pip install fenToBoardImage
 ```
 
-Then import the fenToBoardImage and loadPiecesFolder functions and use them as follows:
+Then import the fenToImage and loadPiecesFolder functions and use them as follows:
 ```
-from fenToBoardImage import fenToBoardImage, loadPiecesFolder
+from fenToBoardImage import fenToImage, loadPiecesFolder
 
-boardImage = fenToBoardImage(
+boardImage = fenToImage(
 	fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
 	squarelength=100,
 	pieceSet=loadPiecesFolder("./pieces"),
