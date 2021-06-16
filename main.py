@@ -27,7 +27,15 @@ def paintCheckerBoard(board, darkColor):
             draw.rectangle([start, end], darkColor)
     return board
 
+"""
+Loads the sprites for a piece set, and prepares it for the fenToBoardImage function
 
+Parameters
+----------
+path: str
+    Loads piece set located at the path provided.
+
+"""
 def loadPiecesFolder(path):
     whitePath = os.path.join(path, "white")
     blackPath = os.path.join(path, "black")
@@ -77,7 +85,28 @@ def paintAllPieces(board, parsed, pieceImages):
                 board = paintPiece(board, (x, y), pieceImages[piece])
     return board
 
+"""
+Takes given parameters and returns a PIL
+image of the resulting chess position
 
+Parameters
+----------
+fen: str
+    Fen string representing a position
+squarelength: int
+    the length of one square on the board
+    resulting board will be 8 * squarelength long
+pieceSet: loadPiecesFolder
+    the piece set, loaded using the loadPiecesFolder function
+darkColor: str
+    dark square color on the board
+lightColor: str
+    light square color on the board
+flipped: boolean
+    default = False
+    Whether to flip to board, and render it from black's perspective
+
+"""
 def fenToBoardImage(fen, squarelength, pieceSet, darkColor, lightColor, flipped=False):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
@@ -88,12 +117,3 @@ def fenToBoardImage(fen, squarelength, pieceSet, darkColor, lightColor, flipped=
     return board
 
 
-if __name__ == '__main__':
-    fenToBoardImage(
-        fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-        squarelength=100,
-        pieceSet=loadPiecesFolder("./test/pieces2"),
-        darkColor="#909090",
-        lightColor="#fffefe",
-        flipped=True
-    ).save("./test/boards/board5.png")
