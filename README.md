@@ -1,7 +1,6 @@
-<center>
-<img src="https://raw.githubusercontent.com/reedkrawiec/fenToBoardImage/main/documentation/logo.png" />
-</center>
-
+<div align="center">
+  <img src="https://raw.githubusercontent.com/reedkrawiec/fenToBoardImage/main/documentation/logo.png" />
+</div>
 
 # About
 
