@@ -1,1 +1,2 @@
-from fenToBoardImage import fenToBoardImage,loadPiecesFolder
+from .main import *
+from . import main

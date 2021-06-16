@@ -2,9 +2,7 @@
 
 from PIL import Image
 from PIL import ImageDraw
-from operator import itemgetter
 import os
-from PIL import ImageChops
 # http://wordaligned.org/articles/drawing-chessboards
 # https://github.com/tlehman/fenparser
 
@@ -167,7 +165,7 @@ flipped: boolean
     Whether to flip to board, and render it from black's perspective
 
 """
-def fenToBoardImage(fen, squarelength, pieceSet, darkColor, lightColor, flipped=False):
+def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, flipped=False):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
     board = paintCheckerBoard(board, darkColor)

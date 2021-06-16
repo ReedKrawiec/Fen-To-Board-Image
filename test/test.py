@@ -1,7 +1,7 @@
 import unittest
 import os
 os.sys.path.append(os.path.abspath("../fenToBoardImage"))
-from fenToBoardImage import fenToBoardImage, loadPiecesFolder
+from main import fenToImage, loadPiecesFolder
 from PIL import Image
 from PIL import ImageDraw
 from operator import itemgetter
@@ -10,7 +10,7 @@ from PIL import ImageChops
 
 class FenToBoardImageTest(unittest.TestCase):
     def test_outputs(self):
-        image1 = fenToBoardImage(
+        image1 = fenToImage(
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=125,
             pieceSet=loadPiecesFolder(
@@ -23,7 +23,7 @@ class FenToBoardImageTest(unittest.TestCase):
         self.assertEqual(diff.getbbox(),None)
         
     def test_board_colors(self):
-        image1 = fenToBoardImage(
+        image1 = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
             pieceSet=loadPiecesFolder("./pieces"),
@@ -35,7 +35,7 @@ class FenToBoardImageTest(unittest.TestCase):
         self.assertEqual(diff.getbbox(),None)
 
     def test_pieces(self):
-        image1 = fenToBoardImage(
+        image1 = fenToImage(
             fen="rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2 ",
             squarelength=100,
             pieceSet=loadPiecesFolder("./pieces2"),
@@ -47,14 +47,14 @@ class FenToBoardImageTest(unittest.TestCase):
         self.assertEqual(diff.getbbox(),None)
     
     def test_flip(self):
-        original = fenToBoardImage(
+        original = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
             pieceSet=loadPiecesFolder("./pieces2"),
             darkColor="#909090",
             lightColor="#fffefe"
         )
-        flipped = fenToBoardImage(
+        flipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
             pieceSet=loadPiecesFolder("./pieces2"),

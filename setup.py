@@ -12,7 +12,7 @@ setuptools.setup(
      description="Create PIL images from chess Fen strings",
      long_description=long_description,
    long_description_content_type="text/markdown",
-     keywords=["chess fen Pillow board"],
+     keywords=["chess fen Pil low board"],
      license="MIT",
      install_requires=["Pillow"],
      url="https://github.com/ReedKrawiec/fenToBoardImage",
