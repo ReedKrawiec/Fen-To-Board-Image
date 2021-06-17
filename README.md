@@ -30,6 +30,26 @@ boardImage = fenToImage(
 	lightColor="#FFCE9E"
 )
 ```
+
+In order to load a piece set, the pieces must follow this file structure, and must be a .png:
+```
+-piece_set_name
+  -white
+    - Knight.png
+    - Rook.png
+    - Pawn.png
+    - Bishop.png
+    - Queen.png
+    - King.png
+  -black
+    - Knight.png
+    - Rook.png
+    - Pawn.png
+    - Bishop.png
+    - Queen.png
+    - King.png
+```
+
 # Usage
 
 The fenToBoardImage has these parameters:

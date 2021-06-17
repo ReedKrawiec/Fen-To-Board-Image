@@ -3,12 +3,12 @@
 from PIL import Image
 from PIL import ImageDraw
 import os
-# http://wordaligned.org/articles/drawing-chessboards
-# https://github.com/tlehman/fenparser
 
-from unittest import TestCase
 from itertools import chain
 import re
+from unittest import TestCase
+
+# https://github.com/tlehman/fenparser
 
 class FenParser():
   def __init__(self, fen_str):
@@ -40,8 +40,6 @@ class FenParser():
   def expand(self, num_str):
     return int(num_str)*" "
 
-
-
 class FenParserTest(TestCase):
   def test_parse_rank(self):
     start_pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -52,8 +50,7 @@ class FenParserTest(TestCase):
     assert fp.parse_rank(rank8) == ["r","n","b","q","k","b","n","r"]
     assert fp.parse_rank(rank7) == ["p","p","p","p","p","p","p","p"]
     assert fp.parse_rank(rank6) == [" "," "," "," "," "," "," "," "]
-
-
+    
   def test_parse_starting_position(self):
     start_pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     fp = FenParser(start_pos)
@@ -68,17 +65,24 @@ class FenParserTest(TestCase):
                           ["P","P","P","P","P","P","P","P"],
                           ["R","N","B","Q","K","B","N","R"]]
 
+
 def paintCheckerBoard(board, darkColor):
     height, width = board.size
     draw = ImageDraw.Draw(board)
     if height != width:
+        # Require a square board, any stretching / transformations
+        # should be handled afterwards through PIL
         raise Exception("Height unequal to width")
     for y in range(0, 8):
         for x in range(0, 8, 2):
             # Four pairs of dark then light must be painted per row
             squareSize = width/8
+
             firstIsColored = y % 2 == 0
+            # If the first square is colored, offset
+            # the pattern of dark then light by one
             startSquareOffset = 1 if firstIsColored else 0
+            
             start = ((x + startSquareOffset) * squareSize, y * squareSize)
             end = ((x + startSquareOffset) * squareSize +
                    squareSize - 1, y * squareSize + squareSize - 1)
@@ -97,6 +101,7 @@ path: str
 def loadPiecesFolder(path):
     whitePath = os.path.join(path, "white")
     blackPath = os.path.join(path, "black")
+    # Generates the path for the requested piece
     def wPath(piece): return os.path.join(whitePath, piece + ".png")
     def bPath(piece): return os.path.join(blackPath, piece + ".png")
     pieceImages = {
@@ -130,8 +135,12 @@ def paintPiece(board, cord, image):
     y = cord[1]
     def position(val): return int(val * pieceSize)
     box = (position(x), position(y), position(x + 1), position(y + 1))
+    
+    # Extract the alpha layer to use as a mask
+    # when pasting, to not overwrite the board 
     _, _, _, alpha = image.split()
     Image.Image.paste(board, image, box, alpha)
+    
     return board
 
 
@@ -169,6 +178,8 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, flipped=False
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
     board = paintCheckerBoard(board, darkColor)
+    # Flip the list to reverse the position, and
+    # render from black's POV.
     if flipped:
         parsedBoard.reverse()
     board = paintAllPieces(board, parsedBoard, pieceSet(board))
