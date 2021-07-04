@@ -67,5 +67,24 @@ class FenToBoardImageTest(unittest.TestCase):
         self.assertEqual(ImageChops.difference(original,original_image).getbbox(),None)
         self.assertEqual(ImageChops.difference(flipped,flipped_image).getbbox(),None)
 
+    def test_lastMove(self):
+        lastMoveDrawn = fenToImage(
+            fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            squarelength=100,
+            pieceSet=loadPiecesFolder("./pieces"),
+            darkColor="#909090",
+            lightColor="#fffefe",
+            flipped=True,
+            lastMove={
+                "before":(0,0),
+                "after":(0,1),
+                "darkColor":"#a9a238",
+                "lightColor":"#cdd269"
+            }
+        )
+        i = Image.open("./boards/board6.png")
+        self.assertEqual(ImageChops.difference(lastMoveDrawn,i).getbbox(),None)
+
 if __name__ == '__main__':
     unittest.main()
+    
