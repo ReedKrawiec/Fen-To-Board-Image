@@ -1,7 +1,7 @@
 import unittest
 import os
 os.sys.path.append(os.path.abspath("../fenToBoardImage"))
-from main import fenToImage, loadPiecesFolder
+from main import fenToImage, loadPiecesFolder, loadArrows
 from PIL import Image
 from PIL import ImageDraw
 from operator import itemgetter
@@ -84,7 +84,34 @@ class FenToBoardImageTest(unittest.TestCase):
         )
         i = Image.open("./boards/board6.png")
         self.assertEqual(ImageChops.difference(lastMoveDrawn,i).getbbox(),None)
-
+    def test_KnightArrows(self):
+        arrows = fenToImage(
+                fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                squarelength=100,
+                pieceSet=loadPiecesFolder("./pieces"),
+                darkColor="#909090",
+                lightColor="#fffefe",
+                flipped=True,
+                lastMove={
+                    "before":(0,0),
+                    "after":(0,1),
+                    "darkColor":"#a9a238",
+                    "lightColor":"#cdd269"
+                    },
+                ArrowSet=loadArrows("./arrows1"),
+                Arrows=[
+                    ((3,3),(1,4)),
+                    ((3,3),(2,5)),
+                    ((3,3),(4,5)),
+                    ((3,3),(5,4)),
+                    ((3,3),(5,2)),
+                    ((3,3),(4,1)),
+                    ((3,3),(2,1)),
+                    ((3,3),(1,2)),
+                    ]
+                )
+        i = Image.open("./boards/board7.png")
+        self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)
 if __name__ == '__main__':
     unittest.main()
-    
+
