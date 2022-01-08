@@ -111,7 +111,98 @@ class FenToBoardImageTest(unittest.TestCase):
                     ]
                 )
         i = Image.open("./boards/board7.png")
+        arrows.save("test.png")
         self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)
+    def test_HorizontalArrows(self):
+        arrows = fenToImage(
+                fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                squarelength=100,
+                pieceSet=loadPiecesFolder("./pieces"),
+                darkColor="#909090",
+                lightColor="#fffefe",
+                flipped=True,
+                lastMove={
+                    "before":(0,0),
+                    "after":(0,1),
+                    "darkColor":"#a9a238",
+                    "lightColor":"#cdd269"
+                    },
+                ArrowSet=loadArrows("./arrows1"),
+                Arrows=[
+                    ((0,0),(7,0)),
+                    ((1,1),(6,1)),
+                    ((2,2),(5,2)),
+                    ((3,3),(4,3)),
+                    ((4,4),(3,4)),
+                    ((5,5),(2,5)),
+                    ((6,6),(1,6)),
+                    ((7,7),(0,7)),
+                    ]
+                )
+        i = Image.open("./boards/board9.png")
+        arrows.save("test.png")
+        self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)    
+    def test_VerticalArrows(self):
+        arrows = fenToImage(
+                fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                squarelength=100,
+                pieceSet=loadPiecesFolder("./pieces"),
+                darkColor="#909090",
+                lightColor="#fffefe",
+                flipped=True,
+                lastMove={
+                    "before":(0,0),
+                    "after":(0,1),
+                    "darkColor":"#a9a238",
+                    "lightColor":"#cdd269"
+                    },
+                ArrowSet=loadArrows("./arrows1"),
+                Arrows=[
+                    ((0,0),(0,7)),
+                      ((1,1),(1,6)),
+                      ((2,2),(2,5)),
+                      ((3,3),(3,4)),
+                      ((4,4),(4,3)),
+                      ((5,5),(5,2)),
+                      ((6,6),(6,1)),
+                      ((7,7),(7,0))
+                    ]
+                )
+        i = Image.open("./boards/board8.png")
+        self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)  
+    def test_DiagArrows(self):
+        arrows = fenToImage(
+                fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                squarelength=100,
+                pieceSet=loadPiecesFolder("./pieces"),
+                darkColor="#909090",
+                lightColor="#fffefe",
+                flipped=True,
+                lastMove={
+                    "before":(0,0),
+                    "after":(0,1),
+                    "darkColor":"#a9a238",
+                    "lightColor":"#cdd269"
+                    },
+                ArrowSet=loadArrows("./arrows1"),
+                Arrows=[
+                    ((0,0),(7,7)),
+                      ((1,0),(7,6)),
+                      ((2,0),(7,5)),
+                      ((3,0),(7,4)),
+                      ((4,0),(7,3)),
+                      ((5,0),(7,2)),
+                      ((6,0),(7,1)),
+                      ((6,7),(0,1)),
+                      ((0,2),(5,7)),
+                      ((0,7),(2,5)),
+                      ((7,2),(2,7)),
+                      ((0,5),(2,7)),
+                      ((0,6),(1,7)),
+                    ]
+                )
+        i = Image.open("./boards/board10.png")
+        self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)    
 if __name__ == '__main__':
     unittest.main()
 
