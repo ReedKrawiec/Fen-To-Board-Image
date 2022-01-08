@@ -10,6 +10,8 @@ FenToBoardImage takes a Fen string representing a Chess position, and renders a 
 - the size and color of the board
 - piece sprites
 - black or white perspective
+- Board highlighting for last move
+- Arrows
 
 # Installation
 
