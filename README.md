@@ -22,7 +22,7 @@ $ pip install fenToBoardImage
 
 Then import the fenToImage and loadPiecesFolder functions and use them as follows:
 ```
-from fenToBoardImage import fenToImage, loadPiecesFolder
+from fentoboardimage import fenToImage, loadPiecesFolder
 
 boardImage = fenToImage(
 	fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
