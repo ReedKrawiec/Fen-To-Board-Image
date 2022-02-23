@@ -4,7 +4,7 @@
 
 # About
 
-FenToBoardImage takes a Fen string representing a Chess position, and renders a PIL image of the resulting position.
+fentoboardimage takes a Fen string representing a Chess position, and renders a PIL image of the resulting position.
 
 ###  You can customize:
 - the size and color of the board
@@ -17,7 +17,7 @@ FenToBoardImage takes a Fen string representing a Chess position, and renders a 
 
 Install the package using pip
 ```
-$ pip install fenToBoardImage
+$ pip install fentoboardimage
 ```
 
 Then import the fenToImage and loadPiecesFolder functions and use them as follows:
