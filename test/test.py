@@ -1,6 +1,6 @@
 import unittest
 import os
-os.sys.path.append(os.path.abspath("../fenToBoardImage"))
+os.sys.path.append(os.path.abspath("../fentoboardimage"))
 from main import fenToImage, loadPiecesFolder, loadArrows
 from PIL import Image
 from PIL import ImageDraw
@@ -111,7 +111,6 @@ class FenToBoardImageTest(unittest.TestCase):
                     ]
                 )
         i = Image.open("./boards/board7.png")
-        arrows.save("test.png")
         self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)
     def test_HorizontalArrows(self):
         arrows = fenToImage(
@@ -140,7 +139,6 @@ class FenToBoardImageTest(unittest.TestCase):
                     ]
                 )
         i = Image.open("./boards/board9.png")
-        arrows.save("test.png")
         self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)    
     def test_VerticalArrows(self):
         arrows = fenToImage(
