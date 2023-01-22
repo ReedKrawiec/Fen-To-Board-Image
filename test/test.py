@@ -137,7 +137,6 @@ class FenToBoardImageTest(unittest.TestCase):
                     ((3,3),(1,2)),
                     ]
                 )
-        flipped.save("test.png")
         i = Image.open("./boards/board8.png")
         i_2 = Image.open("./boards/board9.png")
         self.assertEqual(ImageChops.difference(arrows,i).getbbox(),None)
