@@ -66,9 +66,9 @@ squarelength: int
 
 	resulting board will be 8 * squarelength long
 
-pieceSet: loadPiecesFolder
+pieceSet: `loadPiecesFolder`
 
-	the piece set, loaded using the loadPiecesFolder function
+	the piece set, loaded using the `loadPiecesFolder` function
 
 darkColor: str
 
@@ -84,11 +84,29 @@ flipped: boolean
 
 	Whether to flip to board, and render it from black's perspective
 
+ArrowSet: `loadArrowsFolder`
+
+	the piece set, loaded using the `loadArrowsFolder` function
+
 The loadPiecesFolder has one parameter:
+
+Arrows: list[(str,str)]
+
+  A list of tuples containing coordinates to place arrows. In the
+  format of (start, end) using standard chess notation for the squares.
+
+lastMove: dict
+  A dictionary containing the fields `before`, `after`, `darkColor` and `lightColor`. `before` and `after`  using standard chess notation for the squares, and `darkColor` and `lightColor` should be hex strings.
 
 path: str
 
 	Loads piece set located at the path provided.
+
+The loadArrowsFolder has one parameter:
+
+path: str
+
+	Loads arrow set located at the path provided.
 
 
 # Dependencies
