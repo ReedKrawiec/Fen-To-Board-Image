@@ -179,7 +179,7 @@ def paintAllPieces(board, parsed, pieceImages):
     return board
 
 
-def loadArrows(path):
+def loadArrowsFolder(path):
     def arrowP(name): return os.path.join(path, name + ".png")
     arrows = {
         "one": Image.open(arrowP("Knight")).convert("RGBA"),
@@ -324,15 +324,46 @@ flipped: boolean
 
 """
 
+def squareToIndices(square):
+    """
+    Converts a square string to a tuple of indices
+    """
+    return (ord(square[0]) - 97, 7 - int(square[1]) + 1)
+
+def flipCoordTuple(coord):
+    """
+    Flips a tuple of coordinates
+    """
+    return (7 - coord[0], 7 - coord[1])
 
 def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
-    board = paintCheckerBoard(board, darkColor, lastMove)
     # Flip the list to reverse the position, and
     # render from black's POV.
+    if Arrows != None:
+        for arrow in Arrows:
+            if type(arrow[0]) == str:
+                arrow[0] = squareToIndices(arrow[0])
+            if type(arrow[1]) == str:
+                arrow[1] = squareToIndices(arrow[1])
+    if lastMove != None:
+        if type(lastMove["before"]) == str:
+            lastMove["before"] = squareToIndices(lastMove["before"])
+        if type(lastMove["after"]) == str:
+            lastMove["after"] = squareToIndices(lastMove["after"])
     if flipped:
         parsedBoard.reverse()
+        for row in parsedBoard:
+            row.reverse()
+        if lastMove != None:
+            lastMove["before"] = flipCoordTuple(lastMove["before"])
+            lastMove["after"] = flipCoordTuple(lastMove["after"])
+        if Arrows != None:
+            for index, arrow in enumerate(Arrows):
+                Arrows[index] = (flipCoordTuple(arrow[0]), flipCoordTuple(arrow[1]))
+    
+    board = paintCheckerBoard(board, darkColor, lastMove)
     board = paintAllPieces(board, parsedBoard, pieceSet(board))
     if ArrowSet != None and Arrows != None:
         board = paintAllArrows(board, Arrows, ArrowSet(board))
