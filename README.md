@@ -92,8 +92,8 @@ The loadPiecesFolder has one parameter:
 
 Arrows: list[(str,str)]
 
-  A list of tuples containing coordinates to place arrows. In the
-  format of (start, end) using standard chess notation for the squares.
+  A list of lists containing coordinates to place arrows. In the
+  format of [start, end] using standard chess notation for the squares.
 
 lastMove: dict
   A dictionary containing the fields `before`, `after`, `darkColor` and `lightColor`. `before` and `after`  using standard chess notation for the squares, and `darkColor` and `lightColor` should be hex strings.
