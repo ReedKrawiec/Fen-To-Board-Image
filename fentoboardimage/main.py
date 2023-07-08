@@ -123,34 +123,46 @@ path: str
 
 """
 
-
-def loadPiecesFolder(path):
-    whitePath = os.path.join(path, "white")
-    blackPath = os.path.join(path, "black")
-    # Generates the path for the requested piece
-    def wPath(piece): return os.path.join(whitePath, piece + ".png")
-    def bPath(piece): return os.path.join(blackPath, piece + ".png")
-    pieceImages = {
-        "p": Image.open(bPath("Pawn")).convert("RGBA"),
-        "P": Image.open(wPath("Pawn")).convert("RGBA"),
-        "r": Image.open(bPath("Rook")).convert("RGBA"),
-        "R": Image.open(wPath("Rook")).convert("RGBA"),
-        "n": Image.open(bPath("Knight")).convert("RGBA"),
-        "N": Image.open(wPath("Knight")).convert("RGBA"),
-        "b": Image.open(bPath("Bishop")).convert("RGBA"),
-        "B": Image.open(wPath("Bishop")).convert("RGBA"),
-        "q": Image.open(bPath("Queen")).convert("RGBA"),
-            "Q": Image.open(wPath("Queen")).convert("RGBA"),
-            "k": Image.open(bPath("King")).convert("RGBA"),
-            "K": Image.open(wPath("King")).convert("RGBA")
-    }
+pieceCache = {}
+resizedCache = {}
+def loadPiecesFolder(path, cache=True):
+    if path in pieceCache:
+        pieceImages = pieceCache[path]
+    else:
+        whitePath = os.path.join(path, "white")
+        blackPath = os.path.join(path, "black")
+        # Generates the path for the requested piece
+        def wPath(piece): return os.path.join(whitePath, piece + ".png")
+        def bPath(piece): return os.path.join(blackPath, piece + ".png")
+        pieceImages = {
+            "p": Image.open(bPath("Pawn")).convert("RGBA"),
+            "P": Image.open(wPath("Pawn")).convert("RGBA"),
+            "r": Image.open(bPath("Rook")).convert("RGBA"),
+            "R": Image.open(wPath("Rook")).convert("RGBA"),
+            "n": Image.open(bPath("Knight")).convert("RGBA"),
+            "N": Image.open(wPath("Knight")).convert("RGBA"),
+            "b": Image.open(bPath("Bishop")).convert("RGBA"),
+            "B": Image.open(wPath("Bishop")).convert("RGBA"),
+            "q": Image.open(bPath("Queen")).convert("RGBA"),
+                "Q": Image.open(wPath("Queen")).convert("RGBA"),
+                "k": Image.open(bPath("King")).convert("RGBA"),
+                "K": Image.open(wPath("King")).convert("RGBA")
+        }
+        if cache:
+            pieceCache[path] = pieceImages
 
     def load(board):
-        pieceSize = int(board.size[0]/8)
-        for piece in pieceImages:
-            pieceImages[piece] = pieceImages[piece].resize(
-                (pieceSize, pieceSize))
-        return pieceImages
+        if f'{path}-{board.size[0]}' in resizedCache:
+            return resizedCache[f'{path}-{board.size[0]}']
+        else:
+            pieceSize = int(board.size[0]/8)
+            resized = {}
+            for piece in pieceImages:
+                resized[piece] = pieceImages[piece].resize(
+                    (pieceSize, pieceSize))
+            if cache:
+                resizedCache[f'{path}-{board.size[0]}'] = resized
+            return resized
     return load
 
 
@@ -178,19 +190,29 @@ def paintAllPieces(board, parsed, pieceImages):
                 board = paintPiece(board, (x, y), pieceImages[piece])
     return board
 
-
-def loadArrowsFolder(path):
-    def arrowP(name): return os.path.join(path, name + ".png")
-    arrows = {
-        "one": Image.open(arrowP("Knight")).convert("RGBA"),
-        "up": Image.open(arrowP("Up")).convert("RGBA")
-    }
+arrowsCache = {}
+resizedArrowsCache = {}
+def loadArrowsFolder(path, cache=True):
+    if path in arrowsCache:
+        arrows = arrowsCache[path]
+    else:
+        def arrowP(name): return os.path.join(path, name + ".png")
+        arrows = {
+            "one": Image.open(arrowP("Knight")).convert("RGBA"),
+            "up": Image.open(arrowP("Up")).convert("RGBA")
+        }
 
     def load(board):
-        squareSize = int(board.size[0]/8)
-        arrows["one"] = arrows["one"].resize((squareSize*3, squareSize*2))
-        arrows["up"] = arrows["up"].resize((squareSize, squareSize*3))
-        return arrows
+        if f'{path}-{board.size[0]}' in resizedArrowsCache:
+            return resizedArrowsCache[f'{path}-{board.size[0]}']
+        else:
+            squareSize = int(board.size[0]/8)
+            resized = {}
+            resized["one"] = arrows["one"].resize((squareSize*3, squareSize*2))
+            resized["up"] = arrows["up"].resize((squareSize, squareSize*3))
+            if cache:
+                resizedArrowsCache[f'{path}-{board.size[0]}'] = resized
+            return resized
     return load
 
 
