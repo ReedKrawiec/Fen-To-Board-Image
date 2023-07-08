@@ -6,6 +6,10 @@
 
 fentoboardimage takes a Fen string representing a Chess position, and renders a PIL image of the resulting position.
 
+# Examples
+
+Examples can be found under the `examples` folder in this repository.
+
 ###  You can customize:
 - the size and color of the board
 - piece sprites
@@ -70,6 +74,16 @@ pieceSet: `loadPiecesFolder`
 
 	the piece set, loaded using the `loadPiecesFolder` function
 
+The loadPiecesFolder function has two parameters:
+
+  path: str
+
+	Loads piece set located at the path provided.
+
+  cache: boolean
+
+  Whether to internally cache the piece pngs to avoid reloading
+
 darkColor: str
 
 	dark square color on the board
@@ -86,9 +100,17 @@ flipped: boolean
 
 ArrowSet: `loadArrowsFolder`
 
-	the piece set, loaded using the `loadArrowsFolder` function
+	the arrow set, loaded using the `loadArrowsFolder` function
 
-The loadPiecesFolder has one parameter:
+The loadArrowsFolder function has two parameters:
+
+  path: str
+
+	Loads arrow set located at the path provided.
+
+  cache: boolean
+
+  Whether to internally cache the arrow pngs to avoid reloading
 
 Arrows: list[(str,str)]
 
@@ -101,12 +123,6 @@ lastMove: dict
 path: str
 
 	Loads piece set located at the path provided.
-
-The loadArrowsFolder has one parameter:
-
-path: str
-
-	Loads arrow set located at the path provided.
 
 
 # Dependencies
