@@ -1,7 +1,7 @@
 import unittest
 import os
 os.sys.path.append(os.path.abspath("../fentoboardimage"))
-from main import fenToImage, loadPiecesFolder, loadArrowsFolder
+from main import fenToImage, loadPiecesFolder, loadArrowsFolder, CoordinatePositionFn, loadFontFile
 from PIL import Image
 from PIL import ImageDraw
 from operator import itemgetter
@@ -16,8 +16,16 @@ class FenToBoardImageTest(unittest.TestCase):
             pieceSet=loadPiecesFolder(
                 "./pieces"),
             darkColor="#79a65d",
-            lightColor="#daf2cb"
+            lightColor="#daf2cb",
+            coordinates={
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
+                "size": 35,
+                "dark_color": "#000000",
+                "light_color": "#ffffff",
+                "positionFn": CoordinatePositionFn["everySquare"]
+            }
         )
+        image1.show()
         image2 = Image.open("./boards/board1.png")
         diff = ImageChops.difference(image1, image2)
         self.assertEqual(diff.getbbox(),None)

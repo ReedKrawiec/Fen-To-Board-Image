@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, TypedDict, Union
 from PIL import Image
 from PIL import ImageDraw
+from PIL import ImageFont
 import os
 import math
 from itertools import chain
@@ -10,12 +12,65 @@ from unittest import TestCase
 
 # https://github.com/tlehman/fenparser
 
+fontLoaderWithSize = Callable[[int], Union[ImageFont.ImageFont, ImageFont.FreeTypeFont]]
+fontLoader = Callable[[str], fontLoaderWithSize]
+
+class CoordinateFnReturnType(TypedDict):
+    coordinate: Tuple[float, float]
+    text: str
+
+fontType = Union[ImageFont.ImageFont, ImageFont.FreeTypeFont]
+
+CoordinateFn = Callable[[str, Tuple[float, float], float, fontType], Union[List[CoordinateFnReturnType], None]]
+
+def OuterBorderFn(coordinate: str, squareOrigin: Tuple[float, float], squarelength: float, font: fontType)-> List[CoordinateFnReturnType]:
+    return [{
+        "coordinate": (1.0, 1.0),
+        "text": coordinate
+        }]
+
+def InnerBorderFn(coordinate: str, squareOrigin: Tuple[float, float], squarelength: float, font: fontType) -> List[CoordinateFnReturnType]:
+
+    return [{
+        "coordinate": (1.0, 1.0),
+        "text": coordinate
+        }]
+
+def EverySquare(coordinate: str, squareOrigin: Tuple[float, float], squarelength: float, font: fontType) -> List[CoordinateFnReturnType]:
+    box = font.getbbox(coordinate[1]) 
+    height = box[3] - box[1]
+    width = box[2] - box[0]
+    collection = []
+    if coordinate[0] == "a":
+        collection.append({
+            "coordinate": (squareOrigin[0] + 5, squareOrigin[1] + 3),
+            "text": coordinate[1]
+        })
+    if coordinate[1] == "1":
+        collection.append({
+            "coordinate": (squareOrigin[0] + squarelength - width - 5, squareOrigin[1] + squarelength - height - 13),
+            "text": coordinate[0]
+        })
+    return collection
+
+CoordinatePositionFn: Dict[str, CoordinateFn] = {
+    "outerBorder": OuterBorderFn,
+    "innerBorder": InnerBorderFn,
+    "everySquare": EverySquare
+}
+
+class Coordinates(TypedDict):
+    font: fontLoaderWithSize
+    size: Optional[int]
+    dark_color: str
+    light_color: str
+    positionFn: CoordinateFn
 
 class FenParser():
     def __init__(self, fen_str):
-        self.fen_str = fen_str
+        self.fen_str: str = fen_str
 
-    def parse(self):
+    def parse(self) -> "list[list[str]]":
         ranks = self.fen_str.split(" ")[0].split("/")
         pieces_on_all_ranks = [self.parse_rank(rank) for rank in ranks]
         return pieces_on_all_ranks
@@ -68,7 +123,7 @@ class FenParserTest(TestCase):
             ["R", "N", "B", "Q", "K", "B", "N", "R"]]
 
 
-def paintCheckerBoard(board, darkColor, lastMove=None):
+def paintCheckerBoard(board, darkColor, lastMove=None ):
     height, width = board.size
     draw = ImageDraw.Draw(board)
     if height != width:
@@ -76,9 +131,9 @@ def paintCheckerBoard(board, darkColor, lastMove=None):
         # should be handled afterwards through PIL
         raise Exception("Height unequal to width")
 
-    def getRectanglePositionTuples(tup):
-        return [((tup[0] + startSquareOffset) * squareSize, tup[1] * squareSize),
-                ((tup[0] + startSquareOffset) * squareSize + squareSize - 1, tup[1] * squareSize + squareSize - 1)]
+    def getRectanglePositionTuples(tup: Tuple[float, float]):
+        return (((tup[0] + startSquareOffset) * squareSize, tup[1] * squareSize),
+                ((tup[0] + startSquareOffset) * squareSize + squareSize - 1, tup[1] * squareSize + squareSize - 1))
 
     def isLightSquare(tup):
         if tup[0] % 2 == 0:
@@ -92,7 +147,8 @@ def paintCheckerBoard(board, darkColor, lastMove=None):
     for y in range(0, 8):
         for x in range(0, 8, 2):
             # Four pairs of dark then light must be painted per row
-            squareSize = width/8
+            
+            squareSize: int = width/8
 
             firstIsColored = y % 2 == 0
             # If the first square is colored, offset
@@ -100,8 +156,8 @@ def paintCheckerBoard(board, darkColor, lastMove=None):
             startSquareOffset = 1 if firstIsColored else 0
             draw.rectangle(getRectanglePositionTuples((x, y)), darkColor)
     if lastMove != None:
-        beforeColor = lastMove["darkColor"]
-        afterColor = lastMove["darkColor"]
+        beforeColor: str = lastMove["darkColor"]
+        afterColor: str = lastMove["darkColor"]
         if isLightSquare(lastMove["before"]):
             beforeColor = lastMove["lightColor"]
         if isLightSquare(lastMove["after"]):
@@ -346,6 +402,9 @@ flipped: boolean
 
 """
 
+def indicesToSquare(indices: Tuple[int, int]) -> str:
+    return  f"{chr(indices[0] + 97)}{ 7 - indices[1] + 1}"
+
 def squareToIndices(square):
     """
     Converts a square string to a tuple of indices
@@ -358,7 +417,20 @@ def flipCoordTuple(coord):
     """
     return (7 - coord[0], 7 - coord[1])
 
-def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None):
+def paintCoordinatesInsideBoard(board: Image.Image, coordinates: Coordinates) -> Image.Image:
+    for x in range(0,8):
+        for y in range(0,8):
+            coordStr = indicesToSquare((x,y))
+    return board
+
+def loadFontFile(path: str) -> fontLoaderWithSize:
+    def loader(size: int):
+        if ".ttf" in path:
+            return ImageFont.truetype(path, size=size)
+        return ImageFont.load(path)
+    return loader
+
+def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None, coordinates: Union[Coordinates, None] = None):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
     # Flip the list to reverse the position, and
@@ -384,8 +456,20 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
         if Arrows != None:
             for index, arrow in enumerate(Arrows):
                 Arrows[index] = (flipCoordTuple(arrow[0]), flipCoordTuple(arrow[1]))
-    
     board = paintCheckerBoard(board, darkColor, lastMove)
+    print(squarelength * 8)
+    if coordinates != None:
+        draw = ImageDraw.Draw(board)
+        size = 1 if coordinates["size"] == None else coordinates["size"]
+        font = coordinates["font"](size)
+        for x in range(0,8):
+            for y in range(0,8):
+                coordStr = indicesToSquare((x,y))
+                textObjects = coordinates["positionFn"](coordStr, (x * squarelength,y * squarelength), squarelength, font)
+                if textObjects != None:
+                    for text in textObjects:
+                        draw.text(text["coordinate"], text["text"], font=font, fill=coordinates["dark_color"])
+        # board = paint_coordinates_inside_board(board, coordinates)
     board = paintAllPieces(board, parsedBoard, pieceSet(board))
     if ArrowSet != None and Arrows != None:
         board = paintAllArrows(board, Arrows, ArrowSet(board))
