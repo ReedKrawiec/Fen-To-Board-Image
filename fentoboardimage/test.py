@@ -21,10 +21,10 @@ class FenToBoardImageTest(unittest.TestCase):
             coordinates={
                 "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
                 "size": 28,
-                "darkColor": "#79a65d",
-                "lightColor": "#daf2cb",
-                "positionFn": CoordinatePositionFn["everySquare"],
-                "padding": 5,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["outerBorder"],
+                "padding": 15,
                 "outsideBoardColor": "#000000"
             }
         )
