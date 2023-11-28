@@ -34,7 +34,7 @@ jobs:
         run: poetry install
       - name: Run tests
         run: |
-          cd test
+          cd fentoboardimage
           poetry run python test.py
           
           

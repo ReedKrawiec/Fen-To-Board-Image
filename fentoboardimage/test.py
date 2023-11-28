@@ -17,21 +17,20 @@ class FenToBoardImageTest(unittest.TestCase):
                 "./test/pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
-            flipped=True,
-            coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
-                "size": 28,
-                "darkColor": "#daf2cb",
-                "lightColor": "#79a65d",
-                "positionFn": CoordinatePositionFn["outerBorder"],
-                "padding": 15,
-                "outsideBoardColor": "#000000"
-            }
+            # flipped=True,
+            # coordinates={
+            #     "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+            #     "size": 28,
+            #     "darkColor": "#daf2cb",
+            #     "lightColor": "#79a65d",
+            #     "positionFn": CoordinatePositionFn["outerBorder"],
+            #     "padding": 15,
+            #     "outsideBoardColor": "#000000"
+            # }
         )
-        image1.show()
-        # image2 = Image.open("./test/boards/board1.png")
-        # diff = ImageChops.difference(image1, image2)
-        # self.assertEqual(diff.getbbox(), None)
+        image2 = Image.open("./test/boards/board1.png")
+        diff = ImageChops.difference(image1, image2)
+        self.assertEqual(diff.getbbox(), None)
 
     def test_board_colors(self):
         image1 = fenToImage(
@@ -299,6 +298,139 @@ class FenToBoardImageTest(unittest.TestCase):
         self.assertEqual(ImageChops.difference(arrows, i).getbbox(), None)
         self.assertEqual(ImageChops.difference(
             arrows_flipped, i2).getbbox(), None)
+
+    def test_coordinates(self):
+        image1 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=125,
+            pieceSet=loadPiecesFolder(
+                "./test/pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            coordinates={
+                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "size": 28,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["outerBorder"],
+                "padding": 15,
+                "outsideBoardColor": "#000000"
+            }
+        )
+        image2 = Image.open("./test/boards/board16.png")
+        image3 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=40,
+            pieceSet=loadPiecesFolder(
+                "./test/pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            coordinates={
+                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "size": 18,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["innerBorder"],
+                "padding": 5,
+                "outsideBoardColor": "#000000"
+            }
+        )
+        image4 = Image.open("./test/boards/board17.png")
+        image5 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=40,
+            pieceSet=loadPiecesFolder(
+                "./test/pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            coordinates={
+                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "size": 18,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["everySquare"],
+                "padding": 5,
+                "outsideBoardColor": "#000000"
+            }
+        )
+        image6 = Image.open("./test/boards/board18.png")
+
+        diff = ImageChops.difference(image1, image2)
+        self.assertEqual(diff.getbbox(), None)
+
+        diff = ImageChops.difference(image3, image4)
+        self.assertEqual(diff.getbbox(), None)
+
+        diff = ImageChops.difference(image5, image6)
+        self.assertEqual(diff.getbbox(), None)
+
+    def test_coordinates_flipped(self):
+        image1 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=125,
+            pieceSet=loadPiecesFolder(
+                "./test/pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            flipped=True,
+            coordinates={
+                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "size": 28,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["outerBorder"],
+                "padding": 15,
+                "outsideBoardColor": "#000000"
+            }
+        )
+        image2 = Image.open("./test/boards/board19.png")
+        image3 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=40,
+            pieceSet=loadPiecesFolder(
+                "./test/pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            flipped=True,
+            coordinates={
+                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "size": 18,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["innerBorder"],
+                "padding": 5,
+                "outsideBoardColor": "#000000"
+            }
+        )
+        image4 = Image.open("./test/boards/board20.png")
+        image5 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=40,
+            pieceSet=loadPiecesFolder(
+                "./test/pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            flipped=True,
+            coordinates={
+                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "size": 18,
+                "darkColor": "#daf2cb",
+                "lightColor": "#79a65d",
+                "positionFn": CoordinatePositionFn["everySquare"],
+                "padding": 5,
+                "outsideBoardColor": "#000000"
+            }
+        )
+        image6 = Image.open("./test/boards/board21.png")
+
+        diff = ImageChops.difference(image1, image2)
+        self.assertEqual(diff.getbbox(), None)
+
+        diff = ImageChops.difference(image3, image4)
+        self.assertEqual(diff.getbbox(), None)
+
+        diff = ImageChops.difference(image5, image6)
+        self.assertEqual(diff.getbbox(), None)
 
 
 if __name__ == '__main__':
