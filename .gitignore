@@ -1,7 +1,4 @@
+$TMPDIR
+env2
 env
-lib/__pycache__
-__pycache__
-fenToBoardImage.egg-info
-dist
-build
-.pyirc
+test/__pycache__/*
