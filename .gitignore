@@ -1,3 +1,4 @@
 $TMPDIR
-
+env2
 env
+test/__pycache__/*

@@ -1,6 +1,6 @@
 import unittest
 import os
-from main import fenToImage, loadPiecesFolder, loadArrowsFolder, CoordinatePositionFn, loadFontFile
+from fentoboardimage import fenToImage, loadPiecesFolder, loadArrowsFolder, CoordinatePositionFn, loadFontFile
 from PIL import ImageChops
 from operator import itemgetter
 from PIL import ImageDraw
@@ -14,12 +14,12 @@ class FenToBoardImageTest(unittest.TestCase):
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=125,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             # flipped=True,
             # coordinates={
-            #     "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+            #     "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
             #     "size": 28,
             #     "darkColor": "#daf2cb",
             #     "lightColor": "#79a65d",
@@ -28,7 +28,7 @@ class FenToBoardImageTest(unittest.TestCase):
             #     "outsideBoardColor": "#000000"
             # }
         )
-        image2 = Image.open("./test/boards/board1.png")
+        image2 = Image.open("./boards/board1.png")
         diff = ImageChops.difference(image1, image2)
         self.assertEqual(diff.getbbox(), None)
 
@@ -36,11 +36,11 @@ class FenToBoardImageTest(unittest.TestCase):
         image1 = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#D18B47",
             lightColor="#FFCE9E"
         )
-        image2 = Image.open("./test/boards/board2.png")
+        image2 = Image.open("./boards/board2.png")
         diff = ImageChops.difference(image1, image2)
         self.assertEqual(diff.getbbox(), None)
 
@@ -48,11 +48,11 @@ class FenToBoardImageTest(unittest.TestCase):
         image1 = fenToImage(
             fen="rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2 ",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces2"),
+            pieceSet=loadPiecesFolder("./pieces2"),
             darkColor="#909090",
             lightColor="#fffefe"
         )
-        image2 = Image.open("./test/boards/board3.png")
+        image2 = Image.open("./boards/board3.png")
         diff = ImageChops.difference(image1, image2)
         self.assertEqual(diff.getbbox(), None)
 
@@ -60,20 +60,20 @@ class FenToBoardImageTest(unittest.TestCase):
         original = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces2"),
+            pieceSet=loadPiecesFolder("./pieces2"),
             darkColor="#909090",
             lightColor="#fffefe"
         )
         flipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces2"),
+            pieceSet=loadPiecesFolder("./pieces2"),
             darkColor="#909090",
             lightColor="#fffefe",
             flipped=True
         )
-        original_image = Image.open("./test/boards/board4.png")
-        flipped_image = Image.open("./test/boards/board5.png")
+        original_image = Image.open("./boards/board4.png")
+        flipped_image = Image.open("./boards/board5.png")
         self.assertEqual(ImageChops.difference(
             original, original_image).getbbox(), None)
         self.assertEqual(ImageChops.difference(
@@ -83,7 +83,7 @@ class FenToBoardImageTest(unittest.TestCase):
         lastMoveDrawn = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
             lastMove={
@@ -96,7 +96,7 @@ class FenToBoardImageTest(unittest.TestCase):
         lastMoveDrawnFlipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
             flipped=True,
@@ -107,8 +107,8 @@ class FenToBoardImageTest(unittest.TestCase):
                 "lightColor": "#cdd269"
             }
         )
-        i = Image.open("./test/boards/board6.png")
-        flipped = Image.open("./test/boards/board7.png")
+        i = Image.open("./boards/board6.png")
+        flipped = Image.open("./boards/board7.png")
         self.assertEqual(ImageChops.difference(
             lastMoveDrawn, i).getbbox(), None)
         self.assertEqual(ImageChops.difference(
@@ -118,10 +118,10 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
                 ((3, 3), (1, 4)),
                 ((3, 3), (2, 5)),
@@ -136,10 +136,10 @@ class FenToBoardImageTest(unittest.TestCase):
         flipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             flipped=True,
             Arrows=[
                 ((3, 3), (1, 4)),
@@ -152,8 +152,8 @@ class FenToBoardImageTest(unittest.TestCase):
                 ((3, 3), (1, 2)),
             ]
         )
-        i = Image.open("./test/boards/board8.png")
-        i_2 = Image.open("./test/boards/board9.png")
+        i = Image.open("./boards/board8.png")
+        i_2 = Image.open("./boards/board9.png")
         self.assertEqual(ImageChops.difference(arrows, i).getbbox(), None)
         self.assertEqual(ImageChops.difference(flipped, i_2).getbbox(), None)
 
@@ -161,10 +161,10 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
                 ((0, 0), (7, 0)),
                 ((1, 1), (6, 1)),
@@ -179,10 +179,10 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows_flipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             flipped=True,
             Arrows=[
                 ((0, 0), (7, 0)),
@@ -195,9 +195,9 @@ class FenToBoardImageTest(unittest.TestCase):
                 ((7, 7), (0, 7)),
             ]
         )
-        i = Image.open("./test/boards/board10.png")
+        i = Image.open("./boards/board10.png")
         self.assertEqual(ImageChops.difference(arrows, i).getbbox(), None)
-        i2 = Image.open("./test/boards/board11.png")
+        i2 = Image.open("./boards/board11.png")
         self.assertEqual(ImageChops.difference(
             arrows_flipped, i2).getbbox(), None)
 
@@ -205,10 +205,10 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
                 ((0, 0), (0, 7)),
                 ((1, 1), (1, 6)),
@@ -223,10 +223,10 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows_flipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             flipped=True,
             Arrows=[
                 ((0, 0), (0, 7)),
@@ -239,8 +239,8 @@ class FenToBoardImageTest(unittest.TestCase):
                 ((7, 7), (7, 0))
             ]
         )
-        i = Image.open("./test/boards/board12.png")
-        i2 = Image.open("./test/boards/board13.png")
+        i = Image.open("./boards/board12.png")
+        i2 = Image.open("./boards/board13.png")
         self.assertEqual(ImageChops.difference(arrows, i).getbbox(), None)
         self.assertEqual(ImageChops.difference(
             arrows_flipped, i2).getbbox(), None)
@@ -249,10 +249,10 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
                 ((0, 0), (7, 7)),
                 ((1, 0), (7, 6)),
@@ -272,11 +272,11 @@ class FenToBoardImageTest(unittest.TestCase):
         arrows_flipped = fenToImage(
             fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             squarelength=100,
-            pieceSet=loadPiecesFolder("./test/pieces"),
+            pieceSet=loadPiecesFolder("./pieces"),
             darkColor="#909090",
             lightColor="#fffefe",
             flipped=True,
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
                 ((0, 0), (7, 7)),
                 ((1, 0), (7, 6)),
@@ -293,8 +293,8 @@ class FenToBoardImageTest(unittest.TestCase):
                 ((0, 6), (1, 7)),
             ]
         )
-        i = Image.open("./test/boards/board14.png")
-        i2 = Image.open("./test/boards/board15.png")
+        i = Image.open("./boards/board14.png")
+        i2 = Image.open("./boards/board15.png")
         self.assertEqual(ImageChops.difference(arrows, i).getbbox(), None)
         self.assertEqual(ImageChops.difference(
             arrows_flipped, i2).getbbox(), None)
@@ -304,11 +304,11 @@ class FenToBoardImageTest(unittest.TestCase):
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=125,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
                 "size": 28,
                 "darkColor": "#daf2cb",
                 "lightColor": "#79a65d",
@@ -317,16 +317,16 @@ class FenToBoardImageTest(unittest.TestCase):
                 "outsideBoardColor": "#000000"
             }
         )
-        image2 = Image.open("./test/boards/board16.png")
+        image2 = Image.open("./boards/board16.png")
         image3 = fenToImage(
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=40,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
                 "size": 18,
                 "darkColor": "#daf2cb",
                 "lightColor": "#79a65d",
@@ -335,16 +335,16 @@ class FenToBoardImageTest(unittest.TestCase):
                 "outsideBoardColor": "#000000"
             }
         )
-        image4 = Image.open("./test/boards/board17.png")
+        image4 = Image.open("./boards/board17.png")
         image5 = fenToImage(
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=40,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
                 "size": 18,
                 "darkColor": "#daf2cb",
                 "lightColor": "#79a65d",
@@ -353,7 +353,7 @@ class FenToBoardImageTest(unittest.TestCase):
                 "outsideBoardColor": "#000000"
             }
         )
-        image6 = Image.open("./test/boards/board18.png")
+        image6 = Image.open("./boards/board18.png")
 
         diff = ImageChops.difference(image1, image2)
         self.assertEqual(diff.getbbox(), None)
@@ -369,12 +369,12 @@ class FenToBoardImageTest(unittest.TestCase):
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=125,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             flipped=True,
             coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
                 "size": 28,
                 "darkColor": "#daf2cb",
                 "lightColor": "#79a65d",
@@ -383,17 +383,17 @@ class FenToBoardImageTest(unittest.TestCase):
                 "outsideBoardColor": "#000000"
             }
         )
-        image2 = Image.open("./test/boards/board19.png")
+        image2 = Image.open("./boards/board19.png")
         image3 = fenToImage(
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=40,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             flipped=True,
             coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
                 "size": 18,
                 "darkColor": "#daf2cb",
                 "lightColor": "#79a65d",
@@ -402,16 +402,16 @@ class FenToBoardImageTest(unittest.TestCase):
                 "outsideBoardColor": "#000000"
             }
         )
-        image4 = Image.open("./test/boards/board20.png")
+        image4 = Image.open("./boards/board20.png")
         image5 = fenToImage(
             fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
             squarelength=40,
             pieceSet=loadPiecesFolder(
-                "./test/pieces"),
+                "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
             flipped=True,
-            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
                 ((3, 3), (1, 4)),
                 ((3, 3), (2, 5)),
@@ -423,7 +423,7 @@ class FenToBoardImageTest(unittest.TestCase):
                 ((3, 3), (1, 2)),
             ],
             coordinates={
-                "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
+                "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
                 "size": 18,
                 "darkColor": "#daf2cb",
                 "lightColor": "#79a65d",
@@ -432,7 +432,7 @@ class FenToBoardImageTest(unittest.TestCase):
                 "outsideBoardColor": "#000000"
             }
         )
-        image6 = Image.open("./test/boards/board21.png")
+        image6 = Image.open("./boards/board21.png")
 
         diff = ImageChops.difference(image1, image2)
         self.assertEqual(diff.getbbox(), None)
