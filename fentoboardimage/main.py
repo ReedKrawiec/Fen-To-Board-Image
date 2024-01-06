@@ -5,12 +5,12 @@ from PIL import ImageDraw
 from PIL import ImageFont
 import os
 import math
-from Utils import indicesToSquare, squareToIndices, flipCoordTuple, flippedCheck
-from Coordinates import CoordinatePositionFn, paintCoordinateOverlay
-from FenParser import FenParser
-from Checkerboard import paintCheckerBoard
-from Pieces import paintAllPieces
-from Arrows import paintAllArrows
+from .Utils import indicesToSquare, squareToIndices, flipCoordTuple, flippedCheck
+from .Coordinates import CoordinatePositionFn, paintCoordinateOverlay
+from .FenParser import FenParser
+from .Checkerboard import paintCheckerBoard
+from .Pieces import paintAllPieces
+from .Arrows import paintAllArrows
 
 pieceCache = {}
 resizedCache = {}

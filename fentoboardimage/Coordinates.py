@@ -1,7 +1,7 @@
 from PIL import ImageDraw
 from PIL import Image
 import math
-from Utils import flippedCheck, indicesToSquare
+from .Utils import flippedCheck, indicesToSquare
 
 
 def OuterBorderFn(coordinate, squareOrigin, squarelength, font, flipped, padding):
