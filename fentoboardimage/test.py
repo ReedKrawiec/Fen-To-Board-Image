@@ -411,6 +411,17 @@ class FenToBoardImageTest(unittest.TestCase):
             darkColor="#79a65d",
             lightColor="#daf2cb",
             flipped=True,
+            ArrowSet=loadArrowsFolder("./test/arrows1"),
+            Arrows=[
+                ((3, 3), (1, 4)),
+                ((3, 3), (2, 5)),
+                ((3, 3), (4, 5)),
+                ((3, 3), (5, 4)),
+                ((3, 3), (5, 2)),
+                ((3, 3), (4, 1)),
+                ((3, 3), (2, 1)),
+                ((3, 3), (1, 2)),
+            ],
             coordinates={
                 "font": loadFontFile("./test/fonts/Roboto-Bold.ttf"),
                 "size": 18,

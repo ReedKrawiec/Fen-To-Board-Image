@@ -4,7 +4,6 @@ from PIL import Image
 
 def _generateArrow(arrow, length, pieceSize):
     image = arrow
-    _, _, _, alpha = image.split()
     resized = Image.new("RGBA", (pieceSize, int(pieceSize*length)))
     head = image.crop((0, 0, pieceSize, pieceSize)).convert("RGBA")
     tail = image.crop((0, pieceSize*2, pieceSize,
@@ -36,78 +35,62 @@ def paintAllArrows(board, arrowConfiguration, arrowSet):
         target_y = position(end[1])
         if delta == (-2, 1):
             image = arrowSet["one"].transpose(Image.FLIP_TOP_BOTTOM)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, start_y), alpha)
+            Image.Image.alpha_composite(board, image, (target_x, start_y))
         elif delta == (-1, 2):
             image = arrowSet["one"].transpose(Image.ROTATE_270).transpose(
                 Image.FLIP_LEFT_RIGHT).transpose(Image.FLIP_TOP_BOTTOM)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, start_y), alpha)
+            Image.Image.alpha_composite(board, image, (target_x, start_y))
         elif delta == (1, 2):
             image = arrowSet["one"].transpose(Image.ROTATE_270).transpose(
                 Image.FLIP_LEFT_RIGHT).transpose(Image.ROTATE_180)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, start_y), alpha)
+            Image.Image.alpha_composite(board, image, (start_x, start_y))
         elif delta == (2, 1):
             image = arrowSet["one"].transpose(Image.ROTATE_180)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, start_y), alpha)
+            Image.Image.alpha_composite(board, image, (start_x, start_y))
         elif delta == (2, -1):
             image = arrowSet["one"].transpose(Image.FLIP_LEFT_RIGHT)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, target_y), alpha)
+            Image.Image.alpha_composite(board, image, (start_x, target_y))
         elif delta == (1, -2):
             image = arrowSet["one"].transpose(Image.ROTATE_270).transpose(
                 Image.FLIP_LEFT_RIGHT).transpose(Image.FLIP_LEFT_RIGHT)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, target_y), alpha)
+            Image.Image.alpha_composite(board, image, (start_x, target_y))
         elif delta == (-1, -2):
             image = arrowSet["one"].transpose(
                 Image.ROTATE_270).transpose(Image.FLIP_LEFT_RIGHT)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, target_y), alpha)
+            Image.Image.alpha_composite(board, image, (target_x, target_y))
         elif delta == (-2, -1):
             image = arrowSet["one"]
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, target_y), alpha)
+            Image.Image.alpha_composite(board, image, (target_x, target_y))
         elif delta[0] == 0:
             image = _generateArrow(
                 arrowSet["up"], abs(delta[1]) + 1, pieceSize)
             if delta[1] > 0:
                 image = image.transpose(Image.ROTATE_180)
-                _, _, _, alpha = image.split()
-                Image.Image.paste(board, image, (start_x, start_y), alpha)
+                Image.Image.alpha_composite(board, image, (start_x, start_y))
             else:
-                _, _, _, alpha = image.split()
-                Image.Image.paste(board, image, (target_x, target_y), alpha)
+                Image.Image.alpha_composite(board, image, (target_x, target_y))
         elif delta[1] == 0:
             image = _generateArrow(arrowSet["up"], abs(
                 delta[0]) + 1, pieceSize).transpose(Image.ROTATE_270)
             if delta[0] < 0:
                 image = image.transpose(Image.ROTATE_180)
-                _, _, _, alpha = image.split()
-                Image.Image.paste(board, image, (target_x, target_y), alpha)
+                Image.Image.alpha_composite(board, image, (target_x, target_y))
             else:
-                _, _, _pass, alpha = image.split()
-                Image.Image.paste(board, image, (start_x, start_y), alpha)
+                Image.Image.alpha_composite(board, image, (start_x, start_y))
         elif abs(delta[0]) == abs(delta[1]):
             arrow = _generateArrow(arrowSet["up"], (math.sqrt(
                 (abs(delta[0]) + 0.5)**2 + (abs(delta[1]) + 0.5)**2)), pieceSize).rotate(45, expand=True)
             if delta[0] > 0 and delta[1] > 0:
                 arrow = arrow.transpose(Image.ROTATE_180)
-                _, _, _, alpha = arrow.split()
-                Image.Image.paste(board, arrow, (start_x, start_y), alpha)
+                Image.Image.alpha_composite(board, arrow, (start_x, start_y))
             elif delta[0] > 0 and delta[1] < 0:
                 arrow = arrow.transpose(Image.ROTATE_270)
-                _, _, _, alpha = arrow.split()
-                Image.Image.paste(board, arrow, (start_x, target_y), alpha)
+                Image.Image.alpha_composite(board, arrow, (start_x, target_y))
             elif delta[0] < 0 and delta[1] > 0:
                 arrow = arrow.transpose(Image.ROTATE_90)
-                _, _, _, alpha = arrow.split()
-                Image.Image.paste(board, arrow, (target_x, start_y), alpha)
+                Image.Image.alpha_composite(board, arrow, (target_x, start_y))
             elif delta[0] < 0 and delta[1] < 0:
-                _, _, _, alpha = arrow.split()
-                Image.Image.paste(board, arrow, (target_x, target_y), alpha)
+                Image.Image.alpha_composite(board, arrow, (target_x, target_y))
 
         else:
             raise ValueError("Invalid arrow target: start(" +

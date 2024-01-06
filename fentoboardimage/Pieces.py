@@ -7,12 +7,12 @@ def paintPiece(board, cord, image):
     x = cord[0]
     y = cord[1]
     def position(val): return int(val * pieceSize)
-    box = (position(x), position(y), position(x + 1), position(y + 1))
+    box = (position(x), position(y))
 
     # Extract the alpha layer to use as a mask
     # when pasting, to not overwrite the board
     _, _, _, alpha = image.split()
-    Image.Image.paste(board, image, box, alpha)
+    Image.Image.alpha_composite(board, image, box)
 
     return board
 
