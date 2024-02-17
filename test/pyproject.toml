@@ -5,4 +5,5 @@ description = ""
 authors = ["red"]
 [tool.poetry.dependencies]
 python = "^3.7"
-fentoboardimage = { path = "../" }
+pillow = "9.0.0"
+fenToBoardImage = {path = "../"}

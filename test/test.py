@@ -443,6 +443,51 @@ class FenToBoardImageTest(unittest.TestCase):
         diff = ImageChops.difference(image5, image6)
         self.assertEqual(diff.getbbox(), None)
 
+    def test_highlighting_square(self):
+        image1 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=125,
+            pieceSet=loadPiecesFolder(
+                "./pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            flipped=True,
+            highlighting={
+                "colors": {
+                    "red": {
+                        "light": "#ff0000",
+                        "dark": "#702963"
+                    },
+                    "green": {
+                        "light": "#00ff00",
+                        "dark": "#2e7d32"
+                    },
+                },
+                "squares": {
+                    "a1": "red",
+                    "a2": "red",
+                    "a3": "red",
+                    "a4": "red",
+                    "a5": "red",
+                    "a6": "red",
+                    "a7": "red",
+                    "a8": "red",
+                    "b1": "green",
+                    "b2": "green",
+                    "b3": "green",
+                    "b4": "green",
+                    "b5": "green",
+                    "b6": "green",
+                    "b7": "green",
+                    "b8": "green",
+                }
+
+            }
+        )
+        image2 = Image.open("./boards/board22.png")
+        diff = ImageChops.difference(image1, image2)
+        self.assertEqual(diff.getbbox(), None)
+
 
 if __name__ == '__main__':
     unittest.main()

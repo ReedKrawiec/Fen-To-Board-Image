@@ -142,7 +142,7 @@ def loadFontFile(path):
     return loader
 
 
-def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None, coordinates=None):
+def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None, coordinates=None, highlighting=None):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
     # Flip the list to reverse the position, and
@@ -158,6 +158,10 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
             lastMove["before"] = squareToIndices(lastMove["before"])
         if type(lastMove["after"]) == str:
             lastMove["after"] = squareToIndices(lastMove["after"])
+    if highlighting != None:
+        squares = highlighting["squares"]
+        highlighting["squares"] = {squareToIndices(
+            x): squares[x] for x in squares}
     if flipped:
         parsedBoard.reverse()
         for row in parsedBoard:
@@ -169,7 +173,8 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
             for index, arrow in enumerate(Arrows):
                 Arrows[index] = (flipCoordTuple(arrow[0]),
                                  flipCoordTuple(arrow[1]))
-    board = paintCheckerBoard(board, darkColor, lastMove)
+
+    board = paintCheckerBoard(board, darkColor, lastMove, highlighting)
     paintOffset = (0, 0)
     if coordinates != None:
         board, paintOffset = paintCoordinateOverlay(
