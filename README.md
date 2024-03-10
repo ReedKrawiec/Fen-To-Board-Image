@@ -167,7 +167,12 @@ The `fenToImage` function has these parameters:
     
 
 - highlighting: `dict`
-  `A dictionary of highlighting color => squares to highlight. The keys of this object have are either a hex color, or a tuple of (light_square_color, dark_square_color). The values of the dictionary must be a list of square coordinates. A hex color key will apply the same color to every listed square, while a tuple key will conditionally apply either light_square_color or dark_square_color depending on if the coordinate is a light or dark square.`
+  
+  		A dictionary of highlighting color => squares to highlight. The keys of this object have
+  		are either a hex color, or a tuple of (light_square_color, dark_square_color). The values
+		of the dictionary must be a list of square coordinates. A hex color key will apply the same
+  		color to every listed square, while a tuple key will conditionally apply either light_square_color
+  		or dark_square_color depending on if the coordinate is a light or dark square.
   
   Example:
   
