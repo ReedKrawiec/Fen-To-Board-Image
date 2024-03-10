@@ -1,0 +1,24 @@
+name: deploy 
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Install Poetry 
+        uses: snok/install-poetry@v1
+      - name: Deploy 
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry build
+          poetry config pypi-token.pypi $PYPI_TOKEN
+          poetry publish
+

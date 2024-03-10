@@ -1,0 +1,25 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Install Poetry 
+        uses: snok/install-poetry@v1
+      - name: Run tests
+        run: |
+          cd test
+          poetry install --no-root
+          poetry run python test.py
