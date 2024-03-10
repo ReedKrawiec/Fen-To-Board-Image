@@ -148,20 +148,21 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
     # Flip the list to reverse the position, and
     # render from black's POV.
     if Arrows != None:
-        for arrow in Arrows:
+        for index, arrowTuple in enumerate(Arrows):
+            arrow = list(arrowTuple)
             if type(arrow[0]) == str:
                 arrow[0] = squareToIndices(arrow[0])
             if type(arrow[1]) == str:
                 arrow[1] = squareToIndices(arrow[1])
+            Arrows[index] = arrow
     if lastMove != None:
         if type(lastMove["before"]) == str:
             lastMove["before"] = squareToIndices(lastMove["before"])
         if type(lastMove["after"]) == str:
             lastMove["after"] = squareToIndices(lastMove["after"])
     if highlighting != None:
-        squares = highlighting["squares"]
-        highlighting["squares"] = {squareToIndices(
-            x): squares[x] for x in squares}
+        for color_pair in highlighting:
+            highlighting[color_pair] = map(squareToIndices, highlighting[color_pair])
     if flipped:
         parsedBoard.reverse()
         for row in parsedBoard:
@@ -173,6 +174,10 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
             for index, arrow in enumerate(Arrows):
                 Arrows[index] = (flipCoordTuple(arrow[0]),
                                  flipCoordTuple(arrow[1]))
+        if highlighting != None:
+            for color_pair in highlighting:
+                highlighting[color_pair] = map(flipCoordTuple, highlighting[color_pair])
+
 
     board = paintCheckerBoard(board, darkColor, lastMove, highlighting)
     paintOffset = (0, 0)

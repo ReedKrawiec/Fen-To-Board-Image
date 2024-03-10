@@ -1,4 +1,5 @@
 
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/reedkrawiec/fenToBoardImage/main/documentation/logo.png" />
 </div>
@@ -153,6 +154,20 @@ The `fenToImage` function has these parameters:
    
          What color to paint the background if the coordinates end up outside the board
     
+
+- highlighting: `dict`
+  `A dictionary of highlighting color => squares to highlight. The keys of this object have are either a hex color, or a tuple of (light_square_color, dark_square_color). The values of the dictionary must be a list of square coordinates. A hex color key will apply the same color to every listed square, while a tuple key will conditionally apply either light_square_color or dark_square_color depending on if the coordinate is a light or dark square.`
+  
+  Example:
+  
+      highlighting={
+         ("#ff0000", "#702963"): ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"],
+         ("#00ff00", "#2e7d32"): ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"],
+         "#0000ff": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"]
+      }
+
+  
+  
 
 # Dependencies
 - [Pillow](https://pypi.org/project/Pillow/)

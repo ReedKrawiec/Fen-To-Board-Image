@@ -8,7 +8,7 @@ def squareToIndices(square):
     """
     Converts a square string to a tuple of indices
     """
-    return (ord(square[0]) - 97, 7 - int(square[1]) + 1)
+    return (ord(square[0]) - 97, 8 - int(square[1]))
 
 
 def flipCoordTuple(coord):

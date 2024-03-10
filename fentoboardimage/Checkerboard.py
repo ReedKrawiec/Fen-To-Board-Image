@@ -45,11 +45,12 @@ def paintCheckerBoard(board, darkColor, lastMove=None, highlighting=None):
         draw.rectangle(getRectanglePositionTuples(
             lastMove["after"]), afterColor)
     if highlighting != None:
-        colors = highlighting["colors"]
-        squares = highlighting["squares"]
-        for square in squares:
-            selectedColor = squares[square]
-            colorDef = colors[selectedColor]
-            draw.rectangle(getRectanglePositionTuples(
-                square), colorDef["light"] if isLightSquare(square) else colorDef["dark"])
+        for color_pair_or_color in highlighting:
+            color_pair = color_pair_or_color
+            if type(color_pair_or_color) == str:
+                color_pair = (color_pair_or_color, color_pair_or_color)
+            squares = highlighting[color_pair_or_color]
+            for square in squares:
+                draw.rectangle(getRectanglePositionTuples(
+                    square),color_pair[0] if isLightSquare(square) else color_pair[1])
     return board
