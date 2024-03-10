@@ -1,7 +1,7 @@
 from PIL import ImageDraw
 
 
-def paintCheckerBoard(board, darkColor, lastMove=None):
+def paintCheckerBoard(board, darkColor, lastMove=None, highlighting=None):
     height, width = board.size
     draw = ImageDraw.Draw(board)
     if height != width:
@@ -44,4 +44,13 @@ def paintCheckerBoard(board, darkColor, lastMove=None):
             lastMove["before"]), beforeColor)
         draw.rectangle(getRectanglePositionTuples(
             lastMove["after"]), afterColor)
+    if highlighting != None:
+        for color_pair_or_color in highlighting:
+            color_pair = color_pair_or_color
+            if type(color_pair_or_color) == str:
+                color_pair = (color_pair_or_color, color_pair_or_color)
+            squares = highlighting[color_pair_or_color]
+            for square in squares:
+                draw.rectangle(getRectanglePositionTuples(
+                    square),color_pair[0] if isLightSquare(square) else color_pair[1])
     return board

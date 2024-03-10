@@ -1,4 +1,5 @@
 
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/reedkrawiec/fenToBoardImage/main/documentation/logo.png" />
 </div>
@@ -58,6 +59,17 @@ In order to load a piece set, the pieces must follow this file structure, and mu
     - King.png
 ```
 
+
+In order to load an arrow set, the images must follow this file structure, and must be a .png:
+```
+- arrow_set_name
+  - Knight.png
+  - Up.png
+```
+
+- `Knight.png` is a 3:2 aspect ratio .png image containing an arrow pointing from the bottom right square to the top left square in the image. This image is internally rotated to correctly point at the target square from the origin
+- `Up.png` is a 1:3 aspect ratio image depicting an upward facing arrow point from the bottom most square to the top most square. This image is internally segmented and used to construct arrows in the ordinate and diagonal direction.
+
 # Usage
 
 The `fenToImage` function has these parameters:
@@ -112,8 +124,8 @@ The `fenToImage` function has these parameters:
 
 - Arrows: `list[(str,str)]`
 
-	  A list of lists containing coordinates to place arrows. In the format
-	  of [start, end] using standard chess notation for the squares.
+	  A list of tuples containing coordinates to place arrows. In the format
+	  of (start, end) using standard chess notation for the squares.
 - lastMove: `dict`
 	
 	  A dictionary containing the fields `before`, `after`, `darkColor` and `lightColor`. 
@@ -153,6 +165,20 @@ The `fenToImage` function has these parameters:
    
          What color to paint the background if the coordinates end up outside the board
     
+
+- highlighting: `dict`
+  `A dictionary of highlighting color => squares to highlight. The keys of this object have are either a hex color, or a tuple of (light_square_color, dark_square_color). The values of the dictionary must be a list of square coordinates. A hex color key will apply the same color to every listed square, while a tuple key will conditionally apply either light_square_color or dark_square_color depending on if the coordinate is a light or dark square.`
+  
+  Example:
+  
+      highlighting={
+         ("#ff0000", "#702963"): ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"],
+         ("#00ff00", "#2e7d32"): ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"],
+         "#0000ff": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"]
+      }
+
+  
+  
 
 # Dependencies
 - [Pillow](https://pypi.org/project/Pillow/)

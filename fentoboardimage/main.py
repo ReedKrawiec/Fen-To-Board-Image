@@ -142,22 +142,27 @@ def loadFontFile(path):
     return loader
 
 
-def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None, coordinates=None):
+def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None, coordinates=None, highlighting=None):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
     # Flip the list to reverse the position, and
     # render from black's POV.
     if Arrows != None:
-        for arrow in Arrows:
+        for index, arrowTuple in enumerate(Arrows):
+            arrow = list(arrowTuple)
             if type(arrow[0]) == str:
                 arrow[0] = squareToIndices(arrow[0])
             if type(arrow[1]) == str:
                 arrow[1] = squareToIndices(arrow[1])
+            Arrows[index] = arrow
     if lastMove != None:
         if type(lastMove["before"]) == str:
             lastMove["before"] = squareToIndices(lastMove["before"])
         if type(lastMove["after"]) == str:
             lastMove["after"] = squareToIndices(lastMove["after"])
+    if highlighting != None:
+        for color_pair in highlighting:
+            highlighting[color_pair] = map(squareToIndices, highlighting[color_pair])
     if flipped:
         parsedBoard.reverse()
         for row in parsedBoard:
@@ -169,7 +174,12 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
             for index, arrow in enumerate(Arrows):
                 Arrows[index] = (flipCoordTuple(arrow[0]),
                                  flipCoordTuple(arrow[1]))
-    board = paintCheckerBoard(board, darkColor, lastMove)
+        if highlighting != None:
+            for color_pair in highlighting:
+                highlighting[color_pair] = map(flipCoordTuple, highlighting[color_pair])
+
+
+    board = paintCheckerBoard(board, darkColor, lastMove, highlighting)
     paintOffset = (0, 0)
     if coordinates != None:
         board, paintOffset = paintCoordinateOverlay(

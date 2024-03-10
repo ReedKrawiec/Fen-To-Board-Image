@@ -17,16 +17,6 @@ class FenToBoardImageTest(unittest.TestCase):
                 "./pieces"),
             darkColor="#79a65d",
             lightColor="#daf2cb",
-            # flipped=True,
-            # coordinates={
-            #     "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
-            #     "size": 28,
-            #     "darkColor": "#daf2cb",
-            #     "lightColor": "#79a65d",
-            #     "positionFn": CoordinatePositionFn["outerBorder"],
-            #     "padding": 15,
-            #     "outsideBoardColor": "#000000"
-            # }
         )
         image2 = Image.open("./boards/board1.png")
         diff = ImageChops.difference(image1, image2)
@@ -123,14 +113,14 @@ class FenToBoardImageTest(unittest.TestCase):
             lightColor="#fffefe",
             ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
-                ((3, 3), (1, 4)),
-                ((3, 3), (2, 5)),
-                ((3, 3), (4, 5)),
-                ((3, 3), (5, 4)),
-                ((3, 3), (5, 2)),
-                ((3, 3), (4, 1)),
-                ((3, 3), (2, 1)),
-                ((3, 3), (1, 2)),
+                ("d5", "b4"),
+                ("d5", "c3"),
+                ("d5", "e3"),
+                ("d5", "f4"),
+                ("d5", "f6"),
+                ("d5", "e7"),
+                ("d5", "c7"),
+                ("d5", "b6"),
             ]
         )
         flipped = fenToImage(
@@ -142,14 +132,14 @@ class FenToBoardImageTest(unittest.TestCase):
             ArrowSet=loadArrowsFolder("./arrows1"),
             flipped=True,
             Arrows=[
-                ((3, 3), (1, 4)),
-                ((3, 3), (2, 5)),
-                ((3, 3), (4, 5)),
-                ((3, 3), (5, 4)),
-                ((3, 3), (5, 2)),
-                ((3, 3), (4, 1)),
-                ((3, 3), (2, 1)),
-                ((3, 3), (1, 2)),
+                ("d5", "b4"),
+                ("d5", "c3"),
+                ("d5", "e3"),
+                ("d5", "f4"),
+                ("d5", "f6"),
+                ("d5", "e7"),
+                ("d5", "c7"),
+                ("d5", "b6"),
             ]
         )
         i = Image.open("./boards/board8.png")
@@ -166,14 +156,14 @@ class FenToBoardImageTest(unittest.TestCase):
             lightColor="#fffefe",
             ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
-                ((0, 0), (7, 0)),
-                ((1, 1), (6, 1)),
-                ((2, 2), (5, 2)),
-                ((3, 3), (4, 3)),
-                ((4, 4), (3, 4)),
-                ((5, 5), (2, 5)),
-                ((6, 6), (1, 6)),
-                ((7, 7), (0, 7)),
+                ("a8", "h8"),
+                ("b7", "g7"),
+                ("c6", "f6"),
+                ("d5", "e5"),
+                ("e4", "d4"),
+                ("f3", "c3"),
+                ("g2", "b2"),
+                ("h1", "a1"),
             ]
         )
         arrows_flipped = fenToImage(
@@ -185,14 +175,14 @@ class FenToBoardImageTest(unittest.TestCase):
             ArrowSet=loadArrowsFolder("./arrows1"),
             flipped=True,
             Arrows=[
-                ((0, 0), (7, 0)),
-                ((1, 1), (6, 1)),
-                ((2, 2), (5, 2)),
-                ((3, 3), (4, 3)),
-                ((4, 4), (3, 4)),
-                ((5, 5), (2, 5)),
-                ((6, 6), (1, 6)),
-                ((7, 7), (0, 7)),
+                ("a8", "h8"),
+                ("b7", "g7"),
+                ("c6", "f6"),
+                ("d5", "e5"),
+                ("e4", "d4"),
+                ("f3", "c3"),
+                ("g2", "b2"),
+                ("h1", "a1"),
             ]
         )
         i = Image.open("./boards/board10.png")
@@ -210,14 +200,14 @@ class FenToBoardImageTest(unittest.TestCase):
             lightColor="#fffefe",
             ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
-                ((0, 0), (0, 7)),
-                ((1, 1), (1, 6)),
-                ((2, 2), (2, 5)),
-                ((3, 3), (3, 4)),
-                ((4, 4), (4, 3)),
-                ((5, 5), (5, 2)),
-                ((6, 6), (6, 1)),
-                ((7, 7), (7, 0))
+                ("a8", "a1"),
+                ("b7", "b2"),
+                ("c6", "c3"),
+                ("d5", "d4"),
+                ("e4", "e5"),
+                ("f3", "f6"),
+                ("g2", "g7"),
+                ("h1", "h8"),
             ]
         )
         arrows_flipped = fenToImage(
@@ -229,14 +219,14 @@ class FenToBoardImageTest(unittest.TestCase):
             ArrowSet=loadArrowsFolder("./arrows1"),
             flipped=True,
             Arrows=[
-                ((0, 0), (0, 7)),
-                ((1, 1), (1, 6)),
-                ((2, 2), (2, 5)),
-                ((3, 3), (3, 4)),
-                ((4, 4), (4, 3)),
-                ((5, 5), (5, 2)),
-                ((6, 6), (6, 1)),
-                ((7, 7), (7, 0))
+                ("a8", "a1"),
+                ("b7", "b2"),
+                ("c6", "c3"),
+                ("d5", "d4"),
+                ("e4", "e5"),
+                ("f3", "f6"),
+                ("g2", "g7"),
+                ("h1", "h8"),
             ]
         )
         i = Image.open("./boards/board12.png")
@@ -254,19 +244,19 @@ class FenToBoardImageTest(unittest.TestCase):
             lightColor="#fffefe",
             ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
-                ((0, 0), (7, 7)),
-                ((1, 0), (7, 6)),
-                ((2, 0), (7, 5)),
-                ((3, 0), (7, 4)),
-                ((4, 0), (7, 3)),
-                ((5, 0), (7, 2)),
-                ((6, 0), (7, 1)),
-                ((6, 7), (0, 1)),
-                ((0, 2), (5, 7)),
-                ((0, 7), (2, 5)),
-                ((7, 2), (2, 7)),
-                ((0, 5), (2, 7)),
-                ((0, 6), (1, 7)),
+                ("a8", "h1"),
+                ("b8", "h2"),
+                ("c8", "h3"),
+                ("d8", "h4"),
+                ("e8", "h5"),
+                ("f8", "h6"),
+                ("g8", "h7"),
+                ("g1", "a7"),
+                ("a6", "f1"),
+                ("a1", "c3"),
+                ("h6", "c1"),
+                ("a3", "c1"),
+                ("a2", "b1"),
             ]
         )
         arrows_flipped = fenToImage(
@@ -278,19 +268,19 @@ class FenToBoardImageTest(unittest.TestCase):
             flipped=True,
             ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
-                ((0, 0), (7, 7)),
-                ((1, 0), (7, 6)),
-                ((2, 0), (7, 5)),
-                ((3, 0), (7, 4)),
-                ((4, 0), (7, 3)),
-                ((5, 0), (7, 2)),
-                ((6, 0), (7, 1)),
-                ((6, 7), (0, 1)),
-                ((0, 2), (5, 7)),
-                ((0, 7), (2, 5)),
-                ((7, 2), (2, 7)),
-                ((0, 5), (2, 7)),
-                ((0, 6), (1, 7)),
+                ("a8", "h1"),
+                ("b8", "h2"),
+                ("c8", "h3"),
+                ("d8", "h4"),
+                ("e8", "h5"),
+                ("f8", "h6"),
+                ("g8", "h7"),
+                ("g1", "a7"),
+                ("a6", "f1"),
+                ("a1", "c3"),
+                ("h6", "c1"),
+                ("a3", "c1"),
+                ("a2", "b1"),
             ]
         )
         i = Image.open("./boards/board14.png")
@@ -413,14 +403,14 @@ class FenToBoardImageTest(unittest.TestCase):
             flipped=True,
             ArrowSet=loadArrowsFolder("./arrows1"),
             Arrows=[
-                ((3, 3), (1, 4)),
-                ((3, 3), (2, 5)),
-                ((3, 3), (4, 5)),
-                ((3, 3), (5, 4)),
-                ((3, 3), (5, 2)),
-                ((3, 3), (4, 1)),
-                ((3, 3), (2, 1)),
-                ((3, 3), (1, 2)),
+                ("d5", "b4"),
+                ("d5", "c3"),
+                ("d5", "e3"),
+                ("d5", "f4"),
+                ("d5", "f6"),
+                ("d5", "e7"),
+                ("d5", "c7"),
+                ("d5", "b6"),
             ],
             coordinates={
                 "font": loadFontFile("./fonts/Roboto-Bold.ttf"),
@@ -443,6 +433,40 @@ class FenToBoardImageTest(unittest.TestCase):
         diff = ImageChops.difference(image5, image6)
         self.assertEqual(diff.getbbox(), None)
 
+    def test_highlighting_square(self):
+        image1 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=125,
+            pieceSet=loadPiecesFolder(
+                "./pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            highlighting={
+                ("#ff0000", "#702963"): ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"],
+                ("#00ff00", "#2e7d32"): ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"],
+                "#0000ff": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"]
+            }
+        )
+        image2 = Image.open("./boards/board22.png")
+        image3 = fenToImage(
+            fen="8/5N2/4p2p/5p1k/1p4rP/1P2Q1P1/P4P1K/5q2 w - - 15 44",
+            squarelength=125,
+            pieceSet=loadPiecesFolder(
+                "./pieces"),
+            darkColor="#79a65d",
+            lightColor="#daf2cb",
+            flipped=True,
+            highlighting={
+                ("#ff0000", "#702963"): ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"],
+                ("#00ff00", "#2e7d32"): ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"],
+                "#0000ff": ("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8")
+            }
+            )
+        image4 = Image.open("./boards/board23.png")
+        diff = ImageChops.difference(image1, image2)
+        self.assertEqual(diff.getbbox(), None)
+        diff = ImageChops.difference(image3, image4)
+        self.assertEqual(diff.getbbox(), None)
 
 if __name__ == '__main__':
     unittest.main()
