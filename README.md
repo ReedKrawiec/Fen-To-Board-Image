@@ -124,7 +124,7 @@ The `fenToImage` function has these parameters:
 
 - Arrows: `list[(str,str)]`
 
-	  A list of lists containing coordinates to place arrows. In the format
+	  A list of tuples containing coordinates to place arrows. In the format
 	  of (start, end) using standard chess notation for the squares.
 - lastMove: `dict`
 	
