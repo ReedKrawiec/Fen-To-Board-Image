@@ -4,33 +4,35 @@ import math
 from .Utils import flippedCheck, indicesToSquare
 
 
+def get_size(font, s):
+    left, top, right, bottom = font.getbbox(s)
+    width, height = right - left, bottom
+    return width, height
+
+
 def OuterBorderFn(coordinate, squareOrigin, squarelength, font, flipped, padding):
     collection = []
     padding = padding if padding != None else 0
 
     if flippedCheck(flipped, coordinate[0], "a", "h"):
-        size = font.getsize(coordinate[1])
-        width, height = size
+        width, height = get_size(font, coordinate[1])
         collection.append({
             "coordinate": (squareOrigin[0] - padding - width, squareOrigin[1] + squarelength/2 - height/2),
             "text": coordinate[1]
         })
     if flippedCheck(flipped, coordinate[0], "h", "a"):
-        size = font.getsize(coordinate[1])
-        width, height = size
+        width, height = get_size(font, coordinate[1])
         collection.append({
             "coordinate": (squareOrigin[0] + padding + squarelength, squareOrigin[1] + squarelength/2 - height/2),
             "text": coordinate[1]})
     if flippedCheck(flipped, coordinate[1], "1", "8"):
-        size = font.getsize(coordinate[0])
-        width, height = size
+        width, height = get_size(font, coordinate[0])
         collection.append({
             "coordinate": (squareOrigin[0] + squarelength/2 - width/2, squareOrigin[1] + squarelength + padding),
             "text": coordinate[0]
         })
     if flippedCheck(flipped, coordinate[1], "8", "1"):
-        size = font.getsize(coordinate[0])
-        width, height = size
+        width, height = get_size(font, coordinate[0])
         collection.append({
             "coordinate": (squareOrigin[0] + squarelength/2 - width/2, squareOrigin[1] - height - padding),
             "text": coordinate[0]
@@ -47,8 +49,7 @@ def InnerBorderFn(coordinate, squareOrigin, squarelength, font, flipped, padding
             "text": coordinate[1]
         })
     if flippedCheck(flipped, coordinate[1], "1", "8"):
-        size = font.getsize(coordinate[0])
-        width, height = size
+        width, height = get_size(font, coordinate[0])
         collection.append({
             "coordinate": (squareOrigin[0] + squarelength - width - padding, squareOrigin[1] + squarelength - height - padding),
             "text": coordinate[0]
@@ -57,8 +58,7 @@ def InnerBorderFn(coordinate, squareOrigin, squarelength, font, flipped, padding
 
 
 def EverySquare(coordinate, squareOrigin, squarelength, font, flipped, padding):
-    size = font.getsize(coordinate[0])
-    width, height = size
+    width, height = get_size(font, coordinate[0])
     padding = padding if padding != None else squarelength/20
     collection = []
     collection.append({
@@ -102,8 +102,7 @@ def paintCoordinateOverlay(board, coordinates, squarelength, flipped):
                         "text": text["text"],
                         "fill": coordinates["darkColor" if dark else "lightColor"]
                     })
-                    size = font.getsize(text["text"])
-                    width, height = size
+                    width, height = get_size(font, text["text"])
                     maxX = max(maxX, text["coordinate"][0] + width)
                     minX = min(minX, text["coordinate"][0])
                     maxY = max(maxY, text["coordinate"][1] + height)
