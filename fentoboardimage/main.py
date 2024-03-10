@@ -1,20 +1,23 @@
 #!/usr/bin/env python
 
+from typing_extensions import Literal, TypedDict
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 import os
 import math
+
+import PIL
 from .Utils import indicesToSquare, squareToIndices, flipCoordTuple, flippedCheck
-from .Coordinates import CoordinatePositionFn, paintCoordinateOverlay
+from .Coordinates import CoordinatePositionFn, PositionFnType, paintCoordinateOverlay, Coordinate
 from .FenParser import FenParser
 from .Checkerboard import paintCheckerBoard
 from .Pieces import paintAllPieces
 from .Arrows import paintAllArrows
+from typing import Any, Callable, Dict, List, Tuple, Union, cast
 
 pieceCache = {}
 resizedCache = {}
-
 
 """
 Loads the sprites for a piece set, and prepares it for the fenToBoardImage function
@@ -26,8 +29,9 @@ path: str
 
 """
 
+ImageLoader = Callable[[Image.Image], dict]
 
-def loadPiecesFolder(path, cache=True):
+def loadPiecesFolder(path: str, cache=True) -> ImageLoader:
     if path in pieceCache:
         pieceImages = pieceCache[path]
     else:
@@ -67,12 +71,11 @@ def loadPiecesFolder(path, cache=True):
             return resized
     return load
 
-
 arrowsCache = {}
 resizedArrowsCache = {}
 
 
-def loadArrowsFolder(path, cache=True):
+def loadArrowsFolder(path: str, cache=True) -> ImageLoader:
     if path in arrowsCache:
         arrows = arrowsCache[path]
     else:
@@ -133,50 +136,78 @@ flipped: boolean
 
 """
 
+FontLoader = Callable[[int], Union[ImageFont.ImageFont, ImageFont.FreeTypeFont]]
 
-def loadFontFile(path):
+def loadFontFile(path) -> FontLoader:
     def loader(size):
         if ".ttf" in path:
             return ImageFont.truetype(path, size=size)
         return ImageFont.load(path)
     return loader
 
+class LastMoveType(TypedDict):
+    before: Coordinate
+    after: Coordinate
+    darkColor: str
+    lightColor: str
 
-def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None, Arrows=None, flipped=False, lastMove=None, coordinates=None, highlighting=None):
+class CoordinateType(TypedDict):
+    font: FontLoader
+    size: int
+    darkColor: str
+    lightColor: str
+    positionFn: Union[ PositionFnType, None ]
+    padding: Union[int, None]
+    outsideBoardColor: Union[str, None]
+
+def fenToImage(
+        fen: str,
+        squarelength: int,
+        pieceSet: ImageLoader,
+        darkColor: str,
+        lightColor: str,
+        ArrowSet:Union[ImageLoader, None]=None,
+        Arrows: Union[List[Tuple[Coordinate, Coordinate]], None]=None,
+        flipped:bool=False,
+        lastMove: Union[LastMoveType, None]=None,
+        coordinates: Union[CoordinateType, None]=None,
+        highlighting: Union[Dict[Union[Tuple[str, str], str], List[str]], None]=None):
     board = Image.new("RGB", (squarelength * 8, squarelength * 8), lightColor)
     parsedBoard = FenParser(fen).parse()
     # Flip the list to reverse the position, and
     # render from black's POV.
-    if Arrows != None:
-        for index, arrowTuple in enumerate(Arrows):
-            arrow = list(arrowTuple)
+    lastMoveInternal: Any = lastMove
+    ArrowsInternal: Any = Arrows
+    if ArrowsInternal != None:
+        for index, arrowTuple in enumerate(ArrowsInternal):
+            arrow: Union[Any, Any] = list(arrowTuple)
             if type(arrow[0]) == str:
                 arrow[0] = squareToIndices(arrow[0])
             if type(arrow[1]) == str:
                 arrow[1] = squareToIndices(arrow[1])
-            Arrows[index] = arrow
-    if lastMove != None:
-        if type(lastMove["before"]) == str:
-            lastMove["before"] = squareToIndices(lastMove["before"])
-        if type(lastMove["after"]) == str:
-            lastMove["after"] = squareToIndices(lastMove["after"])
+            ArrowsInternal[index] = arrow
+    if lastMoveInternal != None:
+        if type(lastMoveInternal["before"]) == str:
+            lastMoveInternal["before"] = squareToIndices(lastMoveInternal["before"])
+        if type(lastMoveInternal["after"]) == str:
+            lastMoveInternal["after"] = lastMoveInternal["after"]
     if highlighting != None:
         for color_pair in highlighting:
-            highlighting[color_pair] = map(squareToIndices, highlighting[color_pair])
+            highlighting[(color_pair)] = cast(Any, map(squareToIndices, highlighting[color_pair]))
     if flipped:
         parsedBoard.reverse()
         for row in parsedBoard:
             row.reverse()
-        if lastMove != None:
-            lastMove["before"] = flipCoordTuple(lastMove["before"])
-            lastMove["after"] = flipCoordTuple(lastMove["after"])
-        if Arrows != None:
-            for index, arrow in enumerate(Arrows):
-                Arrows[index] = (flipCoordTuple(arrow[0]),
+        if lastMoveInternal != None:
+            lastMoveInternal["before"] = flipCoordTuple(lastMoveInternal["before"])
+            lastMoveInternal["after"] = flipCoordTuple(lastMoveInternal["after"])
+        if ArrowsInternal != None:
+            for index, arrow in enumerate(ArrowsInternal):
+                ArrowsInternal[index] = (flipCoordTuple(arrow[0]),
                                  flipCoordTuple(arrow[1]))
         if highlighting != None:
             for color_pair in highlighting:
-                highlighting[color_pair] = map(flipCoordTuple, highlighting[color_pair])
+                highlighting[color_pair] = cast(Any, map(flipCoordTuple, highlighting[color_pair]))
 
 
     board = paintCheckerBoard(board, darkColor, lastMove, highlighting)
@@ -188,8 +219,9 @@ def fenToImage(fen, squarelength, pieceSet, darkColor, lightColor, ArrowSet=None
         "RGBA", (squarelength * 8, squarelength * 8))
     pieceAndArrowOverlay = paintAllPieces(
         pieceAndArrowOverlay, parsedBoard, pieceSet(pieceAndArrowOverlay))
-    if ArrowSet != None and Arrows != None:
+    if ArrowSet != None and ArrowsInternal != None:
         pieceAndArrowOverlay = paintAllArrows(
-            pieceAndArrowOverlay, Arrows, ArrowSet(pieceAndArrowOverlay))
+            pieceAndArrowOverlay, ArrowsInternal, ArrowSet(pieceAndArrowOverlay))
     board.paste(pieceAndArrowOverlay, paintOffset, mask=pieceAndArrowOverlay)
     return board
+

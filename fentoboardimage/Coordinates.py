@@ -1,14 +1,33 @@
-from PIL import ImageDraw
+from typing import Tuple, Union, cast
+from typing_extensions import Literal, TypedDict
+from PIL import ImageDraw, ImageFont
 from PIL import Image
 import math
 from .Utils import flippedCheck, indicesToSquare
 
+Coordinate = Literal[
+    "a1", "a2", "a3", "a4", "a5", "a6","a7", "a8",
+    "b1", "b2", "b3", "b4", "b5", "b6","b7", "b8",
+    "c1", "c2", "c3", "c4", "c5", "c6","c7", "c8",
+    "d1", "d2", "d3", "d4", "d5", "d6","d7", "d8",
+    "e1", "e2", "e3", "e4", "e5", "e6","e7", "e8",
+    "f1", "f2", "f3", "f4", "f5", "f6","f7", "f8",
+    "g1", "g2", "g3", "g4", "g5", "g6","g7", "g8",
+    "h1", "h2", "h3", "h4", "h5", "h6","h7", "h8",
+]
 
 def get_size(font, s):
     left, top, right, bottom = font.getbbox(s)
     width, height = right - left, bottom
     return width, height
 
+class PositionFnType:
+    coordinate: Coordinate
+    squareOrigin: Tuple[int, int]
+    squarelength: int
+    font: Union[ImageFont.ImageFont, ImageFont.FreeTypeFont]
+    flipped: bool
+    padding: int
 
 def OuterBorderFn(coordinate, squareOrigin, squarelength, font, flipped, padding):
     collection = []
@@ -71,11 +90,10 @@ def EverySquare(coordinate, squareOrigin, squarelength, font, flipped, padding):
     })
     return collection
 
-
-CoordinatePositionFn = {
-    "outerBorder": OuterBorderFn,
-    "innerBorder": InnerBorderFn,
-    "everySquare": EverySquare
+CoordinatePositionFn= {
+    "outerBorder": cast(PositionFnType, OuterBorderFn),
+    "innerBorder": cast(PositionFnType, InnerBorderFn),
+    "everySquare": cast(PositionFnType, EverySquare)
 }
 
 
@@ -125,3 +143,4 @@ def paintCoordinateOverlay(board, coordinates, squarelength, flipped):
         draw.text((text["position"][0] + paintOffset[0], text["position"][1] + paintOffset[1]),
                   text["text"], font=font, fill=text["fill"])
     return coordOverlay, paintOffset
+

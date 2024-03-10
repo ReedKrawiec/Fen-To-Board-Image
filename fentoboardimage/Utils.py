@@ -24,3 +24,5 @@ def flippedCheck(flipped, checkChar, c1, c2):
     if flipped and checkChar == c2:
         return True
     return False
+
+

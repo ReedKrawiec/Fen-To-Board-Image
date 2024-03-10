@@ -459,7 +459,7 @@ class FenToBoardImageTest(unittest.TestCase):
             highlighting={
                 ("#ff0000", "#702963"): ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"],
                 ("#00ff00", "#2e7d32"): ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"],
-                "#0000ff": ("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8")
+                "#0000ff": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"]
             }
             )
         image4 = Image.open("./boards/board23.png")
