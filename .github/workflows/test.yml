@@ -50,7 +50,7 @@ jobs:
         uses: snok/install-poetry@v1
       - name: Run tests
         run: |
-          sudo apt install libjpeg-dev zlib1g-dev
+          sudo apt install libjpeg-dev zlib1g-dev freetype
           cd test
           poetry install --no-root
           poetry run python test.py
@@ -66,7 +66,7 @@ jobs:
         uses: snok/install-poetry@v1
       - name: Run tests
         run: |
-          sudo apt install libjpeg-dev zlib1g-dev
+          sudo apt install libjpeg-dev zlib1g-dev freetype
           cd test
           poetry install --no-root
           poetry run python test.py
