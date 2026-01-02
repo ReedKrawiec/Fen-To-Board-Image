@@ -1,4 +1,4 @@
-name: deploy 
+name: Deploy to PyPI
 
 on:
   workflow_dispatch:
@@ -7,18 +7,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.9
-      - name: Install Poetry 
-        uses: snok/install-poetry@v1
-      - name: Deploy 
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      - name: Set up Python
+        run: uv python install 3.11
+      - name: Build package
+        run: uv build
+      - name: Publish to PyPI
         env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          poetry build
-          poetry config pypi-token.pypi $PYPI_TOKEN
-          poetry publish
-
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish
