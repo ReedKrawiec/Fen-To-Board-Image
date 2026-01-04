@@ -13,6 +13,21 @@ from fentoboardimage import (
     every_square,
     along_outer_rim,
     coordinate_position_fn,
+    # Deprecated aliases
+    fenToImage,
+    loadPiecesFolder,
+    loadArrowsFolder,
+    loadFontFile,
+    CoordinatePositionFn,
+)
+from fentoboardimage.main import (
+    fen_to_image,
+    load_pieces_folder,
+    load_arrows_folder,
+    load_font_file,
+    squareToIndices,
+    indicesToSquare,
+    flipCoordTuple,
 )
 
 
@@ -338,3 +353,63 @@ class TestFenParserEdgeCases:
         assert "Q" in result[7]
         assert "K" in result[7]
         assert "P" in result[6]
+
+
+class TestDeprecatedAliases:
+    """Tests for deprecated backwards compatibility aliases."""
+
+    def test_fenToImage_is_alias_for_fen_to_image(self):
+        """Test that fenToImage is an alias for fen_to_image."""
+        assert fenToImage is fen_to_image
+
+    def test_loadPiecesFolder_is_alias_for_load_pieces_folder(self):
+        """Test that loadPiecesFolder is an alias for load_pieces_folder."""
+        assert loadPiecesFolder is load_pieces_folder
+
+    def test_loadArrowsFolder_is_alias_for_load_arrows_folder(self):
+        """Test that loadArrowsFolder is an alias for load_arrows_folder."""
+        assert loadArrowsFolder is load_arrows_folder
+
+    def test_loadFontFile_is_alias_for_load_font_file(self):
+        """Test that loadFontFile is an alias for load_font_file."""
+        assert loadFontFile is load_font_file
+
+    def test_squareToIndices_is_alias_for_square_to_indices(self):
+        """Test that squareToIndices is an alias for square_to_indices."""
+        assert squareToIndices is square_to_indices
+
+    def test_indicesToSquare_is_alias_for_indices_to_square(self):
+        """Test that indicesToSquare is an alias for indices_to_square."""
+        assert indicesToSquare is indices_to_square
+
+    def test_flipCoordTuple_is_alias_for_flip_coord_tuple(self):
+        """Test that flipCoordTuple is an alias for flip_coord_tuple."""
+        assert flipCoordTuple is flip_coord_tuple
+
+    def test_CoordinatePositionFn_is_alias_for_coordinate_position_fn(self):
+        """Test that CoordinatePositionFn is an alias for coordinate_position_fn."""
+        assert CoordinatePositionFn is coordinate_position_fn
+
+    def test_squareToIndices_works_correctly(self):
+        """Test that deprecated squareToIndices works correctly."""
+        assert squareToIndices("a8") == (0, 0)
+        assert squareToIndices("h1") == (7, 7)
+        assert squareToIndices("e4") == (4, 4)
+
+    def test_indicesToSquare_works_correctly(self):
+        """Test that deprecated indicesToSquare works correctly."""
+        assert indicesToSquare((0, 0)) == "a8"
+        assert indicesToSquare((7, 7)) == "h1"
+        assert indicesToSquare((4, 4)) == "e4"
+
+    def test_flipCoordTuple_works_correctly(self):
+        """Test that deprecated flipCoordTuple works correctly."""
+        assert flipCoordTuple((0, 0)) == (7, 7)
+        assert flipCoordTuple((7, 7)) == (0, 0)
+        assert flipCoordTuple((3, 4)) == (4, 3)
+
+    def test_CoordinatePositionFn_contains_expected_keys(self):
+        """Test that deprecated CoordinatePositionFn has expected entries."""
+        assert "standard" in CoordinatePositionFn
+        assert "every_square" in CoordinatePositionFn
+        assert "along_outer_rim" in CoordinatePositionFn
