@@ -272,6 +272,18 @@ class LastMove(TypedDict):
     lightColor: str
 
 
+def _is_light_square(coord: BoardPosition) -> bool:
+    """Check if a board coordinate is a light square.
+
+    Args:
+        coord: A tuple of (x, y) board coordinates.
+
+    Returns:
+        True if the square is light-colored, False if dark.
+    """
+    return (coord[0] + coord[1]) % 2 == 0
+
+
 def paint_checker_board(
     board: Image.Image,
     dark_color: str,
@@ -298,54 +310,41 @@ def paint_checker_board(
     if height != width:
         raise Exception("Height unequal to width")
 
-    def get_rectangle_position_tuples(
-        tup: Tuple[float, float],
-    ) -> Tuple[Tuple[float, float], Tuple[float, float]]:
-        return (
-            ((tup[0] + start_square_offset) * square_size, tup[1] * square_size),
-            (
-                (tup[0] + start_square_offset) * square_size + square_size - 1,
-                tup[1] * square_size + square_size - 1,
-            ),
-        )
-
-    def is_light_square(tup: BoardPosition) -> bool:
-        if tup[0] % 2 == 0:
-            if tup[1] % 2 == 0:
-                return True
-            return False
-        else:
-            if tup[1] % 2 == 0:
-                return False
-            return True
-
     square_size: float = width / 8
 
-    for y in range(0, 8):
+    # Draw dark squares using direct coordinate calculation
+    for y in range(8):
+        # Offset alternates: 1 for even rows, 0 for odd rows
+        start_offset = 1 if y % 2 == 0 else 0
         for x in range(0, 8, 2):
-            first_is_colored = y % 2 == 0
-            start_square_offset = 1 if first_is_colored else 0
-            draw.rectangle(get_rectangle_position_tuples((x, y)), dark_color)
+            actual_x = x + start_offset
+            x0 = actual_x * square_size
+            y0 = y * square_size
+            draw.rectangle(
+                [(x0, y0), (x0 + square_size - 1, y0 + square_size - 1)],
+                dark_color
+            )
 
     if last_move is not None:
-        before_color: str = last_move["darkColor"]
-        after_color: str = last_move["darkColor"]
-        if is_light_square(last_move["before"]):  # type: ignore
-            before_color = last_move["lightColor"]
-        if is_light_square(last_move["after"]):  # type: ignore
-            after_color = last_move["lightColor"]
-        draw.rectangle(
-            get_rectangle_position_tuples(last_move["before"]), before_color  # type: ignore
-        )
-        draw.rectangle(
-            get_rectangle_position_tuples(last_move["after"]), after_color  # type: ignore
-        )
+        before = last_move["before"]
+        after = last_move["after"]
+        before_color = last_move["lightColor"] if _is_light_square(before) else last_move["darkColor"]  # type: ignore
+        after_color = last_move["lightColor"] if _is_light_square(after) else last_move["darkColor"]  # type: ignore
+
+        # Highlight last move squares
+        bx, by = before[0] * square_size, before[1] * square_size  # type: ignore
+        ax, ay = after[0] * square_size, after[1] * square_size  # type: ignore
+        draw.rectangle([(bx, by), (bx + square_size - 1, by + square_size - 1)], before_color)
+        draw.rectangle([(ax, ay), (ax + square_size - 1, ay + square_size - 1)], after_color)
+
     return board
 
 
 # Module-level caches for piece and arrow images
 piece_cache: Dict[str, PieceImages] = {}
 resized_cache: Dict[str, PieceImages] = {}
+# Cache for pre-extracted alpha channels (avoids repeated image.split() calls)
+alpha_cache: Dict[str, Dict[str, Image.Image]] = {}
 
 
 def load_pieces_folder(
@@ -427,10 +426,15 @@ def load_pieces_folder(
         else:
             piece_size = int(board.size[0] / 8)
             resized: PieceImages = {}
+            alphas: Dict[str, Image.Image] = {}
             for piece in piece_images:
-                resized[piece] = piece_images[piece].resize((piece_size, piece_size))
+                resized_img = piece_images[piece].resize((piece_size, piece_size))
+                resized[piece] = resized_img
+                # Pre-extract alpha channel to avoid repeated split() calls
+                _, _, _, alphas[piece] = resized_img.split()
             if cache:
                 resized_cache[cache_key] = resized
+                alpha_cache[cache_key] = alphas
             return resized
 
     return load
@@ -471,6 +475,7 @@ def paint_all_pieces(
     board: Image.Image,
     parsed: List[List[str]],
     piece_images: PieceImages,
+    piece_alphas: Optional[Dict[str, Image.Image]] = None,
 ) -> Image.Image:
     """Paint all pieces from a parsed FEN position onto the board.
 
@@ -478,15 +483,27 @@ def paint_all_pieces(
         board: The PIL Image of the board to paint on.
         parsed: A 2D list of piece characters from FenParser.parse().
         piece_images: A dictionary mapping piece characters to PIL Images.
+        piece_alphas: Optional pre-extracted alpha channels for efficiency.
 
     Returns:
         The modified board image with all pieces painted.
     """
-    for y in range(0, len(parsed)):
-        for x in range(0, len(parsed[y])):
+    height, width = board.size
+    piece_size = int(width / 8)
+
+    for y in range(len(parsed)):
+        for x in range(len(parsed[y])):
             piece = parsed[y][x]
             if piece != " ":
-                board = paint_piece(board, (x, y), piece_images[piece])
+                image = piece_images[piece]
+                # Use cached alpha if available, otherwise extract it
+                if piece_alphas is not None and piece in piece_alphas:
+                    alpha = piece_alphas[piece]
+                else:
+                    _, _, _, alpha = image.split()
+                box = (x * piece_size, y * piece_size,
+                       (x + 1) * piece_size, (y + 1) * piece_size)
+                board.paste(image, box, alpha)
     return board
 
 
@@ -538,13 +555,41 @@ def load_arrows_folder(
         else:
             square_size = int(board.size[0] / 8)
             resized: ArrowImages = {}
-            resized["one"] = arrows["one"].resize((square_size * 3, square_size * 2))
+            base_one = arrows["one"].resize((square_size * 3, square_size * 2))
+            resized["one"] = base_one
             resized["up"] = arrows["up"].resize((square_size, square_size * 3))
+
+            # Pre-compute all 8 knight arrow variants with alpha channels
+            # This avoids repeated transpose() and split() calls in paint_all_arrows
+            resized["knight_-2_1"] = base_one.transpose(Image.FLIP_TOP_BOTTOM)
+            resized["knight_-1_2"] = (
+                base_one.transpose(Image.ROTATE_270)
+                .transpose(Image.FLIP_LEFT_RIGHT)
+                .transpose(Image.FLIP_TOP_BOTTOM)
+            )
+            resized["knight_1_2"] = (
+                base_one.transpose(Image.ROTATE_270)
+                .transpose(Image.FLIP_LEFT_RIGHT)
+                .transpose(Image.ROTATE_180)
+            )
+            resized["knight_2_1"] = base_one.transpose(Image.ROTATE_180)
+            resized["knight_2_-1"] = base_one.transpose(Image.FLIP_LEFT_RIGHT)
+            resized["knight_1_-2"] = base_one.transpose(Image.ROTATE_270)
+            resized["knight_-1_-2"] = (
+                base_one.transpose(Image.ROTATE_270)
+                .transpose(Image.FLIP_LEFT_RIGHT)
+            )
+            resized["knight_-2_-1"] = base_one
+
             if cache:
                 resized_arrows_cache[cache_key] = resized
             return resized
 
     return load
+
+
+# Cache for generated arrows by (arrow_id, length, piece_size)
+_generated_arrow_cache: Dict[Tuple[int, float, int], Image.Image] = {}
 
 
 def _generate_arrow(
@@ -555,7 +600,7 @@ def _generate_arrow(
     """Generate an arrow image of a specific length.
 
     Internal function used to create arrows of varying lengths
-    by combining head, body, and tail segments.
+    by combining head, body, and tail segments. Results are cached.
 
     Args:
         arrow: The base arrow sprite image.
@@ -565,8 +610,12 @@ def _generate_arrow(
     Returns:
         A PIL Image of the generated arrow.
     """
+    # Use arrow's id as cache key component (same arrow object = same cache)
+    cache_key = (id(arrow), length, piece_size)
+    if cache_key in _generated_arrow_cache:
+        return _generated_arrow_cache[cache_key]
+
     image = arrow
-    _, _, _, alpha = image.split()
     resized = Image.new("RGBA", (piece_size, int(piece_size * length)))
     head = image.crop((0, 0, piece_size, piece_size)).convert("RGBA")
     tail = image.crop((0, piece_size * 2, piece_size, piece_size * 3)).convert("RGBA")
@@ -577,6 +626,8 @@ def _generate_arrow(
     if length > 2:
         body = body.resize((piece_size, int(piece_size * (length - 2))))
         resized.paste(body, (0, piece_size))
+
+    _generated_arrow_cache[cache_key] = resized
     return resized
 
 
@@ -614,6 +665,19 @@ def paint_all_arrows(
     def position(val: int) -> int:
         return int(val * piece_size)
 
+    # Knight move cache keys: maps delta to (cache_key, use_target_x, use_target_y)
+    # Boolean flags indicate whether to use target coords instead of start coords
+    knight_deltas = {
+        (-2, 1): ("knight_-2_1", True, False),
+        (-1, 2): ("knight_-1_2", True, False),
+        (1, 2): ("knight_1_2", False, False),
+        (2, 1): ("knight_2_1", False, False),
+        (2, -1): ("knight_2_-1", False, True),
+        (1, -2): ("knight_1_-2", False, True),
+        (-1, -2): ("knight_-1_-2", True, True),
+        (-2, -1): ("knight_-2_-1", True, True),
+    }
+
     for arrow in arrow_configuration:
         start = arrow[0]
         end = arrow[1]
@@ -623,57 +687,14 @@ def paint_all_arrows(
         target_x = position(end[0])
         target_y = position(end[1])
 
-        if delta == (-2, 1):
-            image = arrow_set["one"].transpose(Image.FLIP_TOP_BOTTOM)
+        if delta in knight_deltas:
+            # Use pre-computed knight arrow variant
+            cache_key, use_target_x, use_target_y = knight_deltas[delta]
+            paste_x = target_x if use_target_x else start_x
+            paste_y = target_y if use_target_y else start_y
+            image = arrow_set[cache_key]
             _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, start_y), alpha)
-        elif delta == (-1, 2):
-            image = (
-                arrow_set["one"]
-                .transpose(Image.ROTATE_270)
-                .transpose(Image.FLIP_LEFT_RIGHT)
-                .transpose(Image.FLIP_TOP_BOTTOM)
-            )
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, start_y), alpha)
-        elif delta == (1, 2):
-            image = (
-                arrow_set["one"]
-                .transpose(Image.ROTATE_270)
-                .transpose(Image.FLIP_LEFT_RIGHT)
-                .transpose(Image.ROTATE_180)
-            )
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, start_y), alpha)
-        elif delta == (2, 1):
-            image = arrow_set["one"].transpose(Image.ROTATE_180)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, start_y), alpha)
-        elif delta == (2, -1):
-            image = arrow_set["one"].transpose(Image.FLIP_LEFT_RIGHT)
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, target_y), alpha)
-        elif delta == (1, -2):
-            image = (
-                arrow_set["one"]
-                .transpose(Image.ROTATE_270)
-                .transpose(Image.FLIP_LEFT_RIGHT)
-                .transpose(Image.FLIP_LEFT_RIGHT)
-            )
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (start_x, target_y), alpha)
-        elif delta == (-1, -2):
-            image = (
-                arrow_set["one"]
-                .transpose(Image.ROTATE_270)
-                .transpose(Image.FLIP_LEFT_RIGHT)
-            )
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, target_y), alpha)
-        elif delta == (-2, -1):
-            image = arrow_set["one"]
-            _, _, _, alpha = image.split()
-            Image.Image.paste(board, image, (target_x, target_y), alpha)
+            Image.Image.paste(board, image, (paste_x, paste_y), alpha)
         elif delta[0] == 0:
             image = _generate_arrow(arrow_set["up"], abs(delta[1]) + 1, piece_size)
             if delta[1] > 0:
@@ -961,7 +982,14 @@ def fen_to_image(
                             fill=coordinates["dark_color"],
                         )
 
-    board = paint_all_pieces(board, parsed_board, piece_set(board))
+    piece_images = piece_set(board)
+    # Look up cached alpha channels by finding the matching resized_cache entry
+    piece_alphas = None
+    for cache_key, cached_images in resized_cache.items():
+        if cached_images is piece_images:
+            piece_alphas = alpha_cache.get(cache_key)
+            break
+    board = paint_all_pieces(board, parsed_board, piece_images, piece_alphas)
 
     if arrow_set is not None and arrows is not None:
         board = paint_all_arrows(board, arrows, arrow_set(board))  # type: ignore

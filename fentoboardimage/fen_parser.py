@@ -16,9 +16,22 @@ Example:
 
 from __future__ import annotations
 
-import re
-from itertools import chain
-from typing import Iterator, List
+from typing import List
+
+# Valid piece characters (faster set lookup than regex)
+_PIECES = frozenset('kqbnrpKQBNRP')
+
+# Pre-computed space lists for digits 1-8 (avoids repeated list creation)
+_SPACES = {
+    '1': [' '],
+    '2': [' ', ' '],
+    '3': [' ', ' ', ' '],
+    '4': [' ', ' ', ' ', ' '],
+    '5': [' ', ' ', ' ', ' ', ' '],
+    '6': [' ', ' ', ' ', ' ', ' ', ' '],
+    '7': [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    '8': [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+}
 
 
 class FenParser:
@@ -41,6 +54,8 @@ class FenParser:
         # Output: ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
         ```
     """
+
+    __slots__ = ('fen_str',)
 
     def __init__(self, fen_str: str) -> None:
         """Initialize the FEN parser with a FEN string.
@@ -73,10 +88,28 @@ class FenParser:
             >>> board[0]  # All empty squares
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         """
-        ranks = self.fen_str.split(" ")[0].split("/")
-        pieces_on_all_ranks = [self.parse_rank(rank) for rank in ranks]
-        return pieces_on_all_ranks
+        # Extract board part (before first space) and split by rank
+        board_str = self.fen_str.split(" ", 1)[0]
+        return [self._parse_rank(rank) for rank in board_str.split("/")]
 
+    def _parse_rank(self, rank: str) -> List[str]:
+        """Parse a single rank from FEN notation (optimized single-pass).
+
+        Args:
+            rank: A string representing one rank of the board in FEN notation.
+
+        Returns:
+            A list of 8 strings representing the pieces on that rank.
+        """
+        result: List[str] = []
+        for char in rank:
+            if char in _PIECES:
+                result.append(char)
+            elif char in _SPACES:
+                result.extend(_SPACES[char])
+        return result
+
+    # Keep old methods for backwards compatibility
     def parse_rank(self, rank: str) -> List[str]:
         """Parse a single rank from FEN notation.
 
@@ -95,12 +128,9 @@ class FenParser:
             >>> parser.parse_rank("4p3")
             [' ', ' ', ' ', ' ', 'p', ' ', ' ', ' ']
         """
-        rank_re = re.compile(r"(\d|[kqbnrpKQBNRP])")
-        piece_tokens = rank_re.findall(rank)
-        pieces = self.flatten(map(self.expand_or_noop, piece_tokens))
-        return pieces
+        return self._parse_rank(rank)
 
-    def flatten(self, lst: Iterator[str]) -> List[str]:
+    def flatten(self, lst) -> List[str]:
         """Flatten an iterator of strings into a single list of characters.
 
         Args:
@@ -108,13 +138,8 @@ class FenParser:
 
         Returns:
             A flattened list of individual characters.
-
-        Example:
-            >>> parser = FenParser("8/8/8/8/8/8/8/8 w - - 0 1")
-            >>> parser.flatten([['a', 'b'], ['c', 'd']])
-            ['a', 'b', 'c', 'd']
         """
-        return list(chain(*lst))
+        return [char for s in lst for char in s]
 
     def expand_or_noop(self, piece_str: str) -> str:
         """Expand a number to spaces or return the piece character unchanged.
@@ -125,21 +150,10 @@ class FenParser:
         Returns:
             The original piece character if it's a piece, or a string of
             spaces if it's a number.
-
-        Example:
-            >>> parser = FenParser("8/8/8/8/8/8/8/8 w - - 0 1")
-            >>> parser.expand_or_noop("K")
-            'K'
-            >>> parser.expand_or_noop("3")
-            '   '
         """
-        piece_re = re.compile(r"([kqbnrpKQBNRP])")
-        retval = ""
-        if piece_re.match(piece_str):
-            retval = piece_str
-        else:
-            retval = self.expand(piece_str)
-        return retval
+        if piece_str in _PIECES:
+            return piece_str
+        return self.expand(piece_str)
 
     def expand(self, num_str: str) -> str:
         """Expand a digit string into the corresponding number of spaces.
@@ -149,12 +163,5 @@ class FenParser:
 
         Returns:
             A string of spaces with length equal to the digit value.
-
-        Example:
-            >>> parser = FenParser("8/8/8/8/8/8/8/8 w - - 0 1")
-            >>> parser.expand("3")
-            '   '
-            >>> len(parser.expand("8"))
-            8
         """
-        return int(num_str) * " "
+        return ' ' * int(num_str)

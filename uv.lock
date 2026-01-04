@@ -239,7 +239,7 @@ wheels = [
 
 [[package]]
 name = "fentoboardimage"
-version = "1.3.0"
+version = "1.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "pillow", version = "10.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },

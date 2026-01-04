@@ -1,6 +1,6 @@
 [project]
 name = "fentoboardimage"
-version = "1.4.0"
+version = "1.4.1"
 description = "FenToBoardImage takes a Fen string representing a Chess position, and renders a Pillow image of the resulting position."
 authors = [
     {name = "Reed Krawiec", email = "reedkrawiec@gmail.com"}
