@@ -2,3 +2,12 @@ $TMPDIR
 env2
 env
 test/__pycache__/*
+.venv
+lib/__pycache__
+__pycache__
+fenToBoardImage.egg-info
+dist
+build
+.pyirc
+site/
+.DS_Store

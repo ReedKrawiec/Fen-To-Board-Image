@@ -2,86 +2,24 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
-  test3_9:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.9
-      - name: Install Poetry 
-        uses: snok/install-poetry@v1
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: uv sync
       - name: Run tests
-        run: |
-          cd test
-          poetry install --no-root
-          poetry run python test.py
-  test3_10:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.10.16
-      - name: Install Poetry 
-        uses: snok/install-poetry@v1
-      - name: Run tests
-        run: |
-          cd test
-          poetry install --no-root
-          poetry run python test.py
-  test3_11:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.11
-      - name: Install Poetry 
-        uses: snok/install-poetry@v1
-      - name: Run tests
-        run: |
-          sudo apt install libjpeg-dev zlib1g-dev libfreetype6-dev
-          cd test
-          poetry install --no-root
-          poetry run python test.py
-  test3_12:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.12
-      - name: Install Poetry 
-        uses: snok/install-poetry@v1
-      - name: Run tests
-        run: |
-          sudo apt install libjpeg-dev zlib1g-dev libfreetype6-dev
-          cd test
-          poetry install --no-root
-          poetry run python test.py
-  test3_13:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Python 3
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.13
-      - name: Install Poetry 
-        uses: snok/install-poetry@v1
-      - name: Run tests
-        run: |
-          cd test
-          poetry install --no-root
-          poetry run python test.py
+        run: uv run pytest test/ -v
